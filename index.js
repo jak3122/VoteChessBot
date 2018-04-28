@@ -15,6 +15,8 @@ let currentGameFull;
 
 let voteTimer = null;
 
+let abortTimer = null;
+
 api.connect(onEvent, onEventStreamEnd);
 
 function onEvent(data) {
@@ -59,7 +61,7 @@ function isGoodChallenge(data) {
   return (
     data.challenge.variant.key === "standard" &&
     data.challenge.timeControl.type === "clock" &&
-    data.challenge.perf.name === "Rapid"
+    data.challenge.speed === "rapid"
   );
 }
 
@@ -72,20 +74,32 @@ function onGameEvent(data) {
   if (data.type === "gameFull") {
     currentGameFull = data;
     console.log("new game:", data);
-    if (currentGameFull.white.id === "votechess") {
+    // if we restarted the bot and connected to a game in progress,
+    // we need to reload the game moves
+    const playedMoves = currentGameFull.state.moves.split(" ");
+    for (move in playedMoves) {
+      game.move(move, { sloppy: true });
+    }
+    if (isOurMove()) {
       api.sendChat(
         currentGameFull.id,
         "spectator",
         `Voting ends in ${VOTE_SECONDS} seconds.`
       );
       setMoveTimer();
+    } else {
+      setAbortTimer();
     }
   } else if (data.type == "gameState") {
     console.log("new move:", data);
     const moves = data.moves.split(" ");
     if (!isOurMove(moves)) {
+      if (moves.length === 1) {
+        setAbortTimer();
+      }
       return;
     }
+    clearAbortTimer();
     const newMove = moves[moves.length - 1];
     game.move(newMove, { sloppy: true });
     if (game.game_over()) {
@@ -110,10 +124,17 @@ function onGameEnd() {
 }
 
 function isOurMove(moves) {
-  return (
-    (currentGameFull.white.id === "votechess" && moves.length % 2 === 0) ||
-    (currentGameFull.black.id === "votechess" && moves.length % 2 !== 0)
-  );
+  if (moves) {
+    return (
+      (currentGameFull.white.id === "votechess" && moves.length % 2 === 0) ||
+      (currentGameFull.black.id === "votechess" && moves.length % 2 !== 0)
+    );
+  } else {
+    return (
+      (currentGameFull.white.id === "votechess" && game.turn() === "w") ||
+      (currentGameFull.black.id === "votechess" && game.turn() === "b")
+    );
+  }
 }
 
 function setMoveTimer() {
@@ -207,6 +228,17 @@ function setMoveTimer() {
     }
     votes = {};
   }, VOTE_SECONDS * 1000);
+}
+
+function setAbortTimer() {
+  if (abortTimer) clearTimeout(abortTimer);
+  abortTimer = setTimeout(() => {
+    api.abortGame(currentGameFull.id);
+  }, 30000);
+}
+
+function clearAbortTimer() {
+  if (abortTimer) clearTimeout(abortTimer);
 }
 
 function recordVote(username, command) {

@@ -112,3 +112,12 @@ exports.makeMove = (gameId, move) => {
   const req = https.request(options, res => {});
   req.end();
 };
+
+exports.abortGame = gameId => {
+  const options = {
+    ...optionsPost,
+    path: `/api/bot/game/${gameId}/abort`
+  };
+  const req = https.request(options, res => {});
+  req.end();
+};
