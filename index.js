@@ -191,6 +191,7 @@ function setVoteTimer() {
       } else {
         if (thisSAN === "resign") {
           winners.push("resign");
+          winnerVotes = thisVotes;
           continue;
         }
         const thisObj = game.move(thisSAN, { sloppy: true });
