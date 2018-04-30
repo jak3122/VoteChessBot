@@ -19,6 +19,8 @@ let abortTimer = null;
 
 api.connect(onEvent, onEventStreamEnd);
 
+clearVoteTimer();
+
 function onEvent(data) {
   if (data.type === "challenge") {
     console.log("received challenge:", data);
@@ -73,11 +75,13 @@ function watchGame(gameId) {
 function onGameEvent(data) {
   if (data.type === "gameFull") {
     currentGameFull = data;
+    clearVoteTimer();
     console.log("new game:", data);
     // if we restarted the bot and connected to a game in progress,
     // we need to reload the game moves
     const playedMoves = currentGameFull.state.moves.split(" ");
-    for (move in playedMoves) {
+    console.log("restoring moves:", playedMoves);
+    for (let move of playedMoves) {
       game.move(move, { sloppy: true });
     }
     if (isOurMove()) {
@@ -86,7 +90,7 @@ function onGameEvent(data) {
         "spectator",
         `Voting ends in ${VOTE_SECONDS} seconds.`
       );
-      setMoveTimer();
+      setVoteTimer();
     } else {
       setAbortTimer();
     }
@@ -94,12 +98,12 @@ function onGameEvent(data) {
     console.log("new move:", data);
     const moves = data.moves.split(" ");
     if (!isOurMove(moves)) {
-      if (moves.length === 1) {
-        setAbortTimer();
-      }
       return;
     }
     clearAbortTimer();
+    if (moves.length < 2) {
+      setAbortTimer();
+    }
     const newMove = moves[moves.length - 1];
     game.move(newMove, { sloppy: true });
     if (game.game_over()) {
@@ -110,7 +114,7 @@ function onGameEvent(data) {
       "spectator",
       `Voting ends in ${VOTE_SECONDS} seconds.`
     );
-    setMoveTimer();
+    setVoteTimer();
   } else if (data.type == "chatLine" && data.room === "spectator") {
     recordVote(data.username, data.text);
   }
@@ -137,7 +141,7 @@ function isOurMove(moves) {
   }
 }
 
-function setMoveTimer() {
+function setVoteTimer() {
   if (voteTimer) {
     clearTimeout(voteTimer);
   }
@@ -149,7 +153,7 @@ function setMoveTimer() {
         "spectator",
         `No votes received, voting extended another ${VOTE_SECONDS} seconds.`
       );
-      setMoveTimer();
+      setVoteTimer();
       return;
     }
     // tally the votes
@@ -195,7 +199,8 @@ function setMoveTimer() {
         "spectator",
         `No votes received, voting extended another ${VOTE_SECONDS} seconds.`
       );
-      setMoveTimer();
+      console.log("no legal votes");
+      setVoteTimer();
       return;
     }
     if (winners.length === 1) {
@@ -230,15 +235,23 @@ function setMoveTimer() {
   }, VOTE_SECONDS * 1000);
 }
 
+function clearVoteTimer() {
+  if (voteTimer) clearTimeout(voteTimer);
+  console.log("cleared vote timer");
+}
+
 function setAbortTimer() {
   if (abortTimer) clearTimeout(abortTimer);
+  console.log("setting abort timer");
   abortTimer = setTimeout(() => {
+    console.log("aborting game");
     api.abortGame(currentGameFull.id);
-  }, 30000);
+  }, 60000);
 }
 
 function clearAbortTimer() {
   if (abortTimer) clearTimeout(abortTimer);
+  console.log("cleared abort timer");
 }
 
 function recordVote(username, command) {
