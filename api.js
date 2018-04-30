@@ -121,3 +121,12 @@ exports.abortGame = gameId => {
   const req = https.request(options, res => {});
   req.end();
 };
+
+exports.resignGame = gameId => {
+  const options = {
+    ...optionsPost,
+    path: `/api/bot/game/${gameId}/resign`
+  };
+  const req = https.request(options, res => {});
+  req.end();
+};

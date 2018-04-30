@@ -44,7 +44,7 @@ function onEvent(data) {
     api.sendChat(
       gameId,
       "spectator",
-      "Use !<move> to vote for a move, e.g. !e4 or !O-O"
+      "Use !<move> to vote for a move, e.g. !e4 or !O-O, or !resign to vote for resignation."
     );
     api.sendChat(
       gameId,
@@ -179,12 +179,20 @@ function setVoteTimer() {
       const thisSAN = sortedVotes[i][0];
       const thisVotes = sortedVotes[i][1];
       if (winnerVotes && thisVotes === winnerVotes) {
+        if (thisSAN === "resign") {
+          winners.push("resign");
+          continue;
+        }
         const thisObj = game.move(thisSAN, { sloppy: true });
         game.undo();
         if (thisObj) {
           winners.push(thisObj);
         }
       } else {
+        if (thisSAN === "resign") {
+          winners.push("resign");
+          continue;
+        }
         const thisObj = game.move(thisSAN, { sloppy: true });
         game.undo();
         if (thisObj) {
@@ -205,6 +213,16 @@ function setVoteTimer() {
     }
     if (winners.length === 1) {
       const winnerObj = winners[0];
+      if (winnerObj === "resign") {
+        api.sendChat(
+          currentGameFull.id,
+          "spectator",
+          `Resignation won with ${winnerVotes} votes.`
+        );
+        api.resignGame(currentGameFull.id);
+        votes = {};
+        return;
+      }
       const winnerUci = winnerObj.from + winnerObj.to;
       api.sendChat(
         currentGameFull.id,
@@ -262,7 +280,7 @@ function recordVote(username, command) {
     (currentGameFull.white.id === "votechess" && game.turn() === "w") ||
     (currentGameFull.black.id === "votechess" && game.turn() === "b")
   ) {
-    const move = command.slice(1);
+    const move = command.slice(1).trim();
     console.log("recording vote:", move);
     votes[username] = move;
   }
