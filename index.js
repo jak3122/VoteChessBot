@@ -259,6 +259,16 @@ function setVoteTimer() {
       api.makeMove(currentGameFull.id, winnerUci);
     } else {
       const randWinner = winners[Math.floor(Math.random() * winners.length)];
+      if (randWinner === "resign") {
+        api.sendChat(
+          currentGameFull.id,
+          "spectator",
+          `Resignation won with ${winnerVotes} votes.`
+        );
+        api.resignGame(currentGameFull.id);
+        votes = {};
+        return;
+      }
       api.sendChat(
         currentGameFull.id,
         "spectator",
