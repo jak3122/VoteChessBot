@@ -126,6 +126,7 @@ function onGameEnd() {
   playing = false;
   api.sendChat(currentGameFull.id, "player", "Good game!");
   console.log("game ended");
+  clearVoteTimer();
   nextQueueChallenge();
 }
 
