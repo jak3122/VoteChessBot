@@ -205,8 +205,8 @@ function setVoteTimer() {
           continue;
         }
         const thisObj = game.move(thisSAN, { sloppy: true });
-        game.undo();
         if (thisObj) {
+          game.undo();
           winners.push(thisObj);
         }
       } else {
@@ -216,8 +216,8 @@ function setVoteTimer() {
           continue;
         }
         const thisObj = game.move(thisSAN, { sloppy: true });
-        game.undo();
         if (thisObj) {
+          game.undo();
           winners.push(thisObj);
           winnerVotes = thisVotes;
         }
