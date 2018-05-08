@@ -154,11 +154,13 @@ function setVoteTimer() {
     console.log("moves values:", moves);
     if (moves.length === 0) {
       console.log("No votes received");
-      api.sendChat(
-        currentGameFull.id,
-        "spectator",
-        `No votes received, waiting for votes.`
-      );
+      if (!waitingForVotes) {
+        api.sendChat(
+          currentGameFull.id,
+          "spectator",
+          `No votes received, waiting for votes.`
+        );
+      }
       waitingForVotes = true;
       votes = {};
       setVoteTimer();
@@ -178,11 +180,13 @@ function setVoteTimer() {
     sortedVotes.sort((a, b) => b[1] - a[1]);
     if (sortedVotes.length === 0) {
       console.log("sortedVotes empty");
-      api.sendChat(
-        currentGameFull.id,
-        "spectator",
-        `No votes received, waiting for votes.`
-      );
+      if (!waitingForVotes) {
+        api.sendChat(
+          currentGameFull.id,
+          "spectator",
+          `No votes received, waiting for votes.`
+        );
+      }
       waitingForVotes = true;
       votes = {};
       setVoteTimer();
