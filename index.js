@@ -176,7 +176,9 @@ function setVoteTimer() {
     moves = moves
       .filter(move => {
         const moveObj = game.move(move);
-        game.undo();
+        if (moveObj) {
+          game.undo();
+        }
         return !!moveObj;
       })
       .map(move => {
