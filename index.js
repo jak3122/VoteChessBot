@@ -328,7 +328,7 @@ function recordVote(username, command) {
 async function nextQueueChallenge() {
   while (challengeQueue.length > 0) {
     const challenge = challengeQueue.shift();
-    const accepted = await acceptChallenge(challenge.challenge.id);
+    const accepted = await api.acceptChallenge(challenge.challenge.id);
     if (accepted) {
       break;
     }
