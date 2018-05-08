@@ -159,6 +159,7 @@ function setVoteTimer() {
         "spectator",
         `No votes received, waiting for votes.`
       );
+      waitingForVotes = true;
       votes = {};
       setVoteTimer();
       return;
@@ -182,6 +183,7 @@ function setVoteTimer() {
         "spectator",
         `No votes received, waiting for votes.`
       );
+      waitingForVotes = true;
       votes = {};
       setVoteTimer();
       return;
