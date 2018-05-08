@@ -107,7 +107,12 @@ function onGameEvent(data) {
       setAbortTimer();
     }
     const newMove = moves[moves.length - 1];
-    game.move(newMove, { sloppy: true });
+    console.log(
+      "got opponent move:",
+      newMove,
+      "result:",
+      game.move(newMove, { sloppy: true })
+    );
     if (game.game_over()) {
       return;
     }
@@ -249,7 +254,7 @@ function setVoteTimer() {
         "spectator",
         `${winnerObj.san} won with ${winnerVotes} votes.`
       );
-      game.move(winnerObj.san);
+      console.log("game.move result:", game.move(winnerObj.san));
       api.makeMove(currentGameFull.id, winnerUci);
     } else {
       // don't allow resigning in a tie
@@ -269,7 +274,7 @@ function setVoteTimer() {
       );
       let winnerUci = randWinner.from + randWinner.to;
       if (randWinner.promotion) winnerUci += randWinner.promotion;
-      game.move(randWinner.san);
+      console.log("game.move result:", game.move(randWinner.san));
       api.makeMove(currentGameFull.id, winnerUci);
     }
     votes = {};
