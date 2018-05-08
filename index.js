@@ -166,17 +166,24 @@ function setVoteTimer() {
       setVoteTimer();
       return;
     }
-    // convert to SAN so different move forms are counted as the same move
-    moves = moves.map(move => {
-      if (move === "resign") return "resign";
-      const moveObj = game.move(move);
-      if (moveObj && moveObj.san) {
+    // filter out illegal moves and convert to SAN so
+    // different move forms are counted as the same move
+    moves = moves
+      .filter(move => {
+        const moveObj = game.move(move);
         game.undo();
-        return moveObj.san;
-      } else {
-        return move;
-      }
-    });
+        return !!moveObj;
+      })
+      .map(move => {
+        if (move === "resign") return "resign";
+        const moveObj = game.move(move);
+        if (moveObj && moveObj.san) {
+          game.undo();
+          return moveObj.san;
+        } else {
+          return move;
+        }
+      });
     console.log("moves to SAN:", moves);
     // tally the votes
     const counts = [];
