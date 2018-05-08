@@ -235,7 +235,8 @@ function setVoteTimer() {
         votes = {};
         return;
       }
-      const winnerUci = winnerObj.from + winnerObj.to;
+      let winnerUci = winnerObj.from + winnerObj.to;
+      if (winnerObj.promotion) winnerUci += winnerObj.promotion;
       api.sendChat(
         currentGameFull.id,
         "spectator",
@@ -267,7 +268,8 @@ function setVoteTimer() {
         "spectator",
         `Randomly chosen winner: ${randWinner.san}`
       );
-      const winnerUci = randWinner.from + randWinner.to;
+      let winnerUci = randWinner.from + randWinner.to;
+      if (randWinner.promotion) winnerUci += randWinner.promotion;
       game.move(randWinner.san);
       api.makeMove(currentGameFull.id, winnerUci);
     }
