@@ -316,7 +316,10 @@ function recordVote(username, command) {
     (currentGameFull.white.id === "votechess" && game.turn() === "w") ||
     (currentGameFull.black.id === "votechess" && game.turn() === "b")
   ) {
-    const move = command.slice(1).trim();
+    const move = command
+      .slice(1)
+      .trim()
+      .split(" ")[0];
     console.log("recording vote:", move);
     votes[username] = move;
   } else {
