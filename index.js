@@ -176,7 +176,7 @@ function setVoteTimer() {
     moves = moves
       .filter(move => {
         if (move === "resign") return true;
-        const moveObj = game.move(move);
+        const moveObj = game.move(move, { sloppy: true });
         if (moveObj) {
           game.undo();
         }
@@ -184,7 +184,7 @@ function setVoteTimer() {
       })
       .map(move => {
         if (move === "resign") return "resign";
-        const moveObj = game.move(move);
+        const moveObj = game.move(move, { sloppy: true });
         if (moveObj && moveObj.san) {
           game.undo();
           return moveObj.san;
