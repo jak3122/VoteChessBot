@@ -17,13 +17,15 @@ let voteTimer = null;
 
 let abortTimer = null;
 
+let waitingForVotes = false;
+
 api.connect(onEvent, onEventStreamEnd);
 
 clearVoteTimer();
 
 function onEvent(data) {
   if (data.type === "challenge") {
-    console.log("received challenge:", data);
+    // console.log("received challenge:", data);
     if (isGoodChallenge(data)) {
       if (playing) {
         challengeQueue.push(data);
@@ -33,14 +35,14 @@ function onEvent(data) {
       }
     } else {
       const challengeId = data.challenge.id;
-      console.log("decline challenge:", data);
+      // console.log("decline challenge:", data);
       api.declineChallenge(challengeId);
     }
   } else if (data.type === "gameStart") {
     playing = true;
     votes = {};
     const gameId = data.game.id;
-    console.log("new game", gameId);
+    // console.log("new game", gameId);
     api.sendChat(
       gameId,
       "spectator",
@@ -76,7 +78,7 @@ function onGameEvent(data) {
   if (data.type === "gameFull") {
     currentGameFull = data;
     clearVoteTimer();
-    console.log("new game:", data);
+    // console.log("new game:", data);
     // if we restarted the bot and connected to a game in progress,
     // we need to reload the game moves
     const playedMoves = currentGameFull.state.moves.split(" ");
@@ -95,7 +97,7 @@ function onGameEvent(data) {
       setAbortTimer();
     }
   } else if (data.type == "gameState") {
-    console.log("new move:", data);
+    // console.log("new move:", data);
     const moves = data.moves.split(" ");
     if (!isOurMove(moves)) {
       return;
@@ -147,12 +149,15 @@ function setVoteTimer() {
   }
   voteTimer = setTimeout(() => {
     const moves = Object.values(votes);
+    console.log("moves values:", moves);
     if (moves.length === 0) {
+      console.log("No votes received");
       api.sendChat(
         currentGameFull.id,
         "spectator",
-        `No votes received, voting extended another ${VOTE_SECONDS} seconds.`
+        `No votes received, waiting for votes.`
       );
+      votes = {};
       setVoteTimer();
       return;
     }
@@ -169,6 +174,14 @@ function setVoteTimer() {
     }
     sortedVotes.sort((a, b) => b[1] - a[1]);
     if (sortedVotes.length === 0) {
+      console.log("sortedVotes empty");
+      api.sendChat(
+        currentGameFull.id,
+        "spectator",
+        `No votes received, waiting for votes.`
+      );
+      votes = {};
+      setVoteTimer();
       return;
     }
     let winnerVotes;
@@ -203,15 +216,19 @@ function setVoteTimer() {
       }
     }
     if (winners.length === 0) {
-      api.sendChat(
-        currentGameFull.id,
-        "spectator",
-        `No votes received, voting extended another ${VOTE_SECONDS} seconds.`
-      );
+      if (!waitingForVotes) {
+        api.sendChat(
+          currentGameFull.id,
+          "spectator",
+          `No votes received, waiting for votes.`
+        );
+        waitingForVotes = true;
+      }
       console.log("no legal votes");
       setVoteTimer();
       return;
     }
+    waitingForVotes = false;
     if (winners.length === 1) {
       const winnerObj = winners[0];
       if (winnerObj === "resign") {
@@ -261,7 +278,7 @@ function clearVoteTimer() {
 
 function setAbortTimer() {
   if (abortTimer) clearTimeout(abortTimer);
-  console.log("setting abort timer");
+  // console.log("setting abort timer");
   abortTimer = setTimeout(() => {
     console.log("aborting game");
     api.abortGame(currentGameFull.id);
@@ -270,7 +287,7 @@ function setAbortTimer() {
 
 function clearAbortTimer() {
   if (abortTimer) clearTimeout(abortTimer);
-  console.log("cleared abort timer");
+  // console.log("cleared abort timer");
 }
 
 function recordVote(username, command) {
@@ -284,6 +301,19 @@ function recordVote(username, command) {
     const move = command.slice(1).trim();
     console.log("recording vote:", move);
     votes[username] = move;
+  } else {
+    console.log(
+      "Not recording vote. game.white.id:",
+      currentGameFull.white.id,
+      "game.turn():",
+      game.turn()
+    );
+    console.log(
+      " game.black.id:",
+      currentGameFull.black.id,
+      "game.turn():",
+      game.turn()
+    );
   }
 }
 
