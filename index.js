@@ -175,6 +175,7 @@ function setVoteTimer() {
     // different move forms are counted as the same move
     moves = moves
       .filter(move => {
+        if (move === "resign") return true;
         const moveObj = game.move(move);
         if (moveObj) {
           game.undo();
