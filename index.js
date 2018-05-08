@@ -245,17 +245,9 @@ function setVoteTimer() {
       game.move(winnerObj.san);
       api.makeMove(currentGameFull.id, winnerUci);
     } else {
+      // don't allow resigning in a tie
+      winners = winners.filter(m => m !== "resign");
       const randWinner = winners[Math.floor(Math.random() * winners.length)];
-      if (randWinner === "resign") {
-        api.sendChat(
-          currentGameFull.id,
-          "spectator",
-          `Resignation won with ${winnerVotes} votes.`
-        );
-        api.resignGame(currentGameFull.id);
-        votes = {};
-        return;
-      }
       api.sendChat(
         currentGameFull.id,
         "spectator",
