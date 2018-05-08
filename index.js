@@ -1,7 +1,7 @@
 const api = require("./api");
 const Chess = require("chess.js").Chess;
 
-const VOTE_SECONDS = 10;
+const VOTE_SECONDS = process.env.VOTE_SECONDS || 15;
 
 let playing = false;
 
