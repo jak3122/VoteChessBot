@@ -193,36 +193,11 @@ function setVoteTimer() {
       return;
     }
     let winnerVotes;
-    let winners = [];
+    console.log("sortedVotes:", sortedVotes);
     // find winning move(s)
     // ties are broken by a random choice
-    for (let i = 0; i < sortedVotes.length; i++) {
-      const thisSAN = sortedVotes[i][0];
-      const thisVotes = sortedVotes[i][1];
-      if (winnerVotes && thisVotes === winnerVotes) {
-        if (thisSAN === "resign") {
-          winners.push("resign");
-          continue;
-        }
-        const thisObj = game.move(thisSAN, { sloppy: true });
-        if (thisObj) {
-          game.undo();
-          winners.push(thisObj);
-        }
-      } else {
-        if (thisSAN === "resign") {
-          winners.push("resign");
-          winnerVotes = thisVotes;
-          continue;
-        }
-        const thisObj = game.move(thisSAN, { sloppy: true });
-        if (thisObj) {
-          game.undo();
-          winners.push(thisObj);
-          winnerVotes = thisVotes;
-        }
-      }
-    }
+    let winners = findAllWinners(sortedVotes);
+    console.log("winners:", winners);
     if (winners.length === 0) {
       if (!waitingForVotes) {
         api.sendChat(
@@ -287,6 +262,26 @@ function setVoteTimer() {
     }
     votes = {};
   }, VOTE_SECONDS * 1000);
+}
+
+function findAllWinners(sortedVotes) {
+  if (sortedVotes.length === 0) return [];
+  const maxVotes = sortedVotes[0][1];
+  const winners = sortedVotes.filter(vote => vote[1] === maxVotes);
+  const finalWinners = [];
+  winners.forEach(winner => {
+    const san = winner[0];
+    if (san === "resign") {
+      finalWinners.push("resign");
+      return;
+    }
+    const moveObj = game.move(san, { sloppy: true });
+    if (moveObj) {
+      game.undo();
+      finalWinners.push(moveObj);
+    }
+  });
+  return finalWinners;
 }
 
 function clearVoteTimer() {
