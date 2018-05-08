@@ -192,12 +192,11 @@ function setVoteTimer() {
       setVoteTimer();
       return;
     }
-    let winnerVotes;
     console.log("sortedVotes:", sortedVotes);
     // find winning move(s)
     // ties are broken by a random choice
-    let winners = findAllWinners(sortedVotes);
-    console.log("winners:", winners);
+    let { winners, winnerVotes } = findAllWinners(sortedVotes);
+    console.log("winners:", winners.map(w => (w.san ? w.san : w)));
     if (winners.length === 0) {
       if (!waitingForVotes) {
         api.sendChat(
@@ -281,7 +280,7 @@ function findAllWinners(sortedVotes) {
       finalWinners.push(moveObj);
     }
   });
-  return finalWinners;
+  return { winners: finalWinners, winnerVotes: maxVotes };
 }
 
 function clearVoteTimer() {
