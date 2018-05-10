@@ -1,9 +1,13 @@
 const fs = require("fs");
-const readline = require("readline");
+const path = require("path");
 const Chess = require("chess.js").Chess;
 const api = require("./api");
 
 const VOTE_SECONDS = process.env.VOTE_SECONDS || 15;
+
+const BANNED_FILENAME = path.join(__dirname, "banned.txt");
+
+const MODS_FILENAME = path.join(__dirname, "mods.txt");
 
 let modUsernames = [];
 
@@ -385,7 +389,7 @@ async function nextQueueChallenge() {
 }
 
 function banUsername(username) {
-  fs.appendFile("banned.txt", username.toLowerCase(), err => {
+  fs.appendFile(BANNED_FILENAME, username.toLowerCase(), err => {
     if (err) throw err;
     console.log("wrote username to banned.txt:", username);
     bannedUsernames.push(username.toLowerCase());
@@ -397,7 +401,7 @@ function unbanUsername(username) {
   bannedUsernames = bannedUsernames.filter(
     name => name !== username.toLowerCase()
   );
-  fs.writeFile("banned.txt", bannedUsernames.join("\n"), err => {
+  fs.writeFile(BANNED_FILENAME, bannedUsernames.join("\n"), err => {
     if (err) throw err;
     console.log("unbanned:", username);
     api.sendChat(currentGameFull.id, "spectator", `Unbanned ${username}.`);
@@ -405,7 +409,7 @@ function unbanUsername(username) {
 }
 
 function makeMod(username) {
-  fs.appendFile("mods.txt", username.toLowerCase(), err => {
+  fs.appendFile(MODS_FILENAME, username.toLowerCase(), err => {
     if (err) throw err;
     console.log("made mod:", username);
     modUsernames.push(username.toLowerCase());
@@ -426,29 +430,25 @@ function usernameIsMod(username) {
 }
 
 function cacheModUsernames() {
-  const filename = "mods.txt";
-  modUsernames = [];
-  readline
-    .createInterface({
-      input: fs.createReadStream(filename),
-      terminal: false
-    })
-    .on("line", line => {
-      if (line.trim()) modUsernames.push(line.trim());
-    });
+  fs.readFile(MODS_FILENAME, (err, data) => {
+    if (err) throw err;
+    modUsernames = data
+      .toString()
+      .split("\n")
+      .filter(line => !!line.trim());
+    console.log("cached mods.txt:", modUsernames);
+  });
 }
 
 function cacheBannedUsernames() {
-  const filename = "banned.txt";
-  modUsernames = [];
-  readline
-    .createInterface({
-      input: fs.createReadStream(filename),
-      terminal: false
-    })
-    .on("line", line => {
-      if (line.trim()) modUsernames.push(line.trim());
-    });
+  fs.readFile(BANNED_FILENAME, (err, data) => {
+    if (err) throw err;
+    bannedUsernames = data
+      .toString()
+      .split("\n")
+      .filter(line => !!line.trim());
+    console.log("cached banned.txt:", bannedUsernames);
+  });
 }
 
 cacheModUsernames();
