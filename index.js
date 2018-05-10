@@ -389,7 +389,7 @@ async function nextQueueChallenge() {
 }
 
 function banUsername(username) {
-  fs.appendFile(BANNED_FILENAME, username.toLowerCase(), err => {
+  fs.appendFile(BANNED_FILENAME, username.toLowerCase() + "\n", err => {
     if (err) throw err;
     console.log("wrote username to banned.txt:", username);
     bannedUsernames.push(username.toLowerCase());
@@ -401,7 +401,7 @@ function unbanUsername(username) {
   bannedUsernames = bannedUsernames.filter(
     name => name !== username.toLowerCase()
   );
-  fs.writeFile(BANNED_FILENAME, bannedUsernames.join("\n"), err => {
+  fs.writeFile(BANNED_FILENAME, bannedUsernames.join("\n") + "\n", err => {
     if (err) throw err;
     console.log("unbanned:", username);
     api.sendChat(currentGameFull.id, "spectator", `Unbanned ${username}.`);
@@ -409,7 +409,7 @@ function unbanUsername(username) {
 }
 
 function makeMod(username) {
-  fs.appendFile(MODS_FILENAME, username.toLowerCase(), err => {
+  fs.appendFile(MODS_FILENAME, username.toLowerCase() + "\n", err => {
     if (err) throw err;
     console.log("made mod:", username);
     modUsernames.push(username.toLowerCase());
