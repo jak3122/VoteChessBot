@@ -1,2 +1,4 @@
 node_modules/
 .vscode/
+banned.txt
+mods.txt

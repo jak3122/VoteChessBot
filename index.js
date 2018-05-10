@@ -1,7 +1,13 @@
-const api = require("./api");
+const fs = require("fs");
+const readline = require("readline");
 const Chess = require("chess.js").Chess;
+const api = require("./api");
 
 const VOTE_SECONDS = process.env.VOTE_SECONDS || 15;
+
+let modUsernames = [];
+
+let bannedUsernames = [];
 
 let playing = false;
 
@@ -126,7 +132,16 @@ function onGameEvent(data) {
     );
     setVoteTimer();
   } else if (data.type == "chatLine" && data.room === "spectator") {
-    recordVote(data.username, data.text);
+    if (usernameIsBanned(data.username)) return;
+    if (data.text.startsWith("/ban") && usernameIsMod(data.username)) {
+      banUsername(data.text.split(" ")[1]);
+    } else if (data.text.startsWith("/unban") && usernameIsMod(data.username)) {
+      unbanUsername(data.text.split(" ")[1]);
+    } else if (data.text.startsWith("/mod") ** usernameIsMod(data.username)) {
+      makeMod(data.text.split(" ")[1]);
+    } else {
+      recordVote(data.username, data.text);
+    }
   }
 }
 
@@ -365,3 +380,78 @@ async function nextQueueChallenge() {
     }
   }
 }
+
+function banUsername(username) {
+  fs.appendFile("banned.txt", username.toLowerCase(), err => {
+    if (err) throw err;
+    console.log("wrote username to banned.txt:", username);
+    bannedUsernames.push(username.toLowerCase());
+    api.sendChat(currentGameFull.id, "spectator", `Banned ${username}.`);
+  });
+}
+
+function unbanUsername(username) {
+  bannedUsernames = bannedUsernames.filter(
+    name => name !== username.toLowerCase()
+  );
+  fs.writeFile("banned.txt", bannedUsernames.join("\n"), err => {
+    if (err) throw err;
+    console.log("unbanned:", username);
+    api.sendChat(currentGameFull.id, "spectator", `Unbanned ${username}.`);
+  });
+}
+
+function makeMod(username) {
+  fs.appendFile("mods.txt", username.toLowerCase(), err => {
+    if (err) throw err;
+    console.log("made mod:", username);
+    modUsernames.push(username.toLowerCase());
+    api.sendChat(
+      currentGameFull.id,
+      "spectator",
+      `Promoted ${username} to mod.`
+    );
+  });
+}
+
+function usernameIsBanned(username) {
+  return bannedUsernames.includes(username.toLowerCase());
+}
+
+function usernameIsMod(username) {
+  return modUsernames.includes(username.toLowerCase());
+}
+
+function cacheModUsernames() {
+  const filename = "mods.txt";
+  modUsernames = [];
+  readline
+    .createInterface({
+      input: fs.createReadStream(filename),
+      terminal: false
+    })
+    .on("line", line => {
+      modUsernames.push(line);
+    });
+}
+
+function cacheBannedUsernames() {
+  const filename = "banned.txt";
+  modUsernames = [];
+  readline
+    .createInterface({
+      input: fs.createReadStream(filename),
+      terminal: false
+    })
+    .on("line", line => {
+      modUsernames.push(line);
+    });
+}
+
+cacheModUsernames();
+cacheBannedUsernames();
+
+setInterval(() => {
+  cacheModUsernames();
+  cacheBannedUsernames();
+}, 60000);
