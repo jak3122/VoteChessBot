@@ -140,7 +140,7 @@ function onGameEvent(data) {
       banUsername(data.text.split(" ")[1]);
     } else if (data.text.startsWith("/unban") && usernameIsMod(data.username)) {
       unbanUsername(data.text.split(" ")[1]);
-    } else if (data.text.startsWith("/mod") ** usernameIsMod(data.username)) {
+    } else if (data.text.startsWith("/mod") && usernameIsMod(data.username)) {
       makeMod(data.text.split(" ")[1]);
     } else {
       recordVote(data.username, data.text);
