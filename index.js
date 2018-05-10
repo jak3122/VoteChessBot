@@ -63,6 +63,7 @@ function onEventStreamEnd() {
 
 function isGoodChallenge(data) {
   return (
+    data.challenge.rated === false &&
     data.challenge.variant.key === "standard" &&
     data.challenge.timeControl.type === "clock" &&
     data.challenge.speed === "rapid" &&
