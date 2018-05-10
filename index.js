@@ -132,7 +132,10 @@ function onGameEvent(data) {
     );
     setVoteTimer();
   } else if (data.type == "chatLine" && data.room === "spectator") {
-    if (usernameIsBanned(data.username)) return;
+    if (usernameIsBanned(data.username)) {
+      console.log("ignoring chat from banned user", data.username, data.text);
+      return;
+    }
     if (data.text.startsWith("/ban") && usernameIsMod(data.username)) {
       banUsername(data.text.split(" ")[1]);
     } else if (data.text.startsWith("/unban") && usernameIsMod(data.username)) {
@@ -431,7 +434,7 @@ function cacheModUsernames() {
       terminal: false
     })
     .on("line", line => {
-      modUsernames.push(line);
+      if (line.trim()) modUsernames.push(line.trim());
     });
 }
 
@@ -444,7 +447,7 @@ function cacheBannedUsernames() {
       terminal: false
     })
     .on("line", line => {
-      modUsernames.push(line);
+      if (line.trim()) modUsernames.push(line.trim());
     });
 }
 
