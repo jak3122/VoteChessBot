@@ -46,7 +46,7 @@ function onEvent(data) {
     api.sendChat(
       gameId,
       "spectator",
-      "Use !<move> to vote for a move, e.g. !e4 or !O-O, or !resign to vote for resignation."
+      "Use /<move> to vote for a move, e.g. /e4 or /O-O, or /resign to vote for resignation."
     );
     api.sendChat(
       gameId,
@@ -326,7 +326,7 @@ function clearAbortTimer() {
 }
 
 function recordVote(username, command) {
-  if (!command.startsWith("!")) {
+  if (!command.startsWith("/")) {
     return;
   }
   if (
