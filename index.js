@@ -65,7 +65,9 @@ function isGoodChallenge(data) {
   return (
     data.challenge.variant.key === "standard" &&
     data.challenge.timeControl.type === "clock" &&
-    data.challenge.speed === "rapid"
+    data.challenge.speed === "rapid" &&
+    data.challenge.timeControl.increment >= 15 &&
+    data.challenge.timeControl.limit >= 30
   );
 }
 
