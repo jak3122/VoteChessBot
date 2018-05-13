@@ -288,7 +288,12 @@ function setVoteTimer() {
         votes = {};
         return;
       }
-      let winnerUci = winnerObj.from + winnerObj.to;
+      let winnerUci;
+      if (winnerObj.from === "@") {
+        winnerUci = winnerObj.to;
+      } else {
+        winnerUci = winnerObj.from + winnerObj.to;
+      }
       if (winnerObj.promotion) winnerUci += winnerObj.promotion;
       api.sendChat(
         currentGameFull.id,
@@ -313,7 +318,12 @@ function setVoteTimer() {
         "spectator",
         `Randomly chosen winner: ${randWinner.san}`
       );
-      let winnerUci = randWinner.from + randWinner.to;
+      let winnerUci;
+      if (winnerObj.from === "@") {
+        winnerUci = winnerObj.to;
+      } else {
+        winnerUci = winnerObj.from + winnerObj.to;
+      }
       if (randWinner.promotion) winnerUci += randWinner.promotion;
       console.log("game.move result:", game.move(randWinner.san));
       api.makeMove(currentGameFull.id, winnerUci);
