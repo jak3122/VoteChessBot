@@ -290,9 +290,9 @@ function setVoteTimer() {
       }
       let winnerUci;
       if (winnerObj.from === "@") {
-        winnerUci = winnerObj.to;
-      } else {
         winnerUci = winnerObj.piece.toUpperCase() + "@" + winnerObj.to;
+      } else {
+        winnerUci = winnerObj.from + winnerObj.to;
       }
       if (winnerObj.promotion) winnerUci += winnerObj.promotion;
       api.sendChat(
