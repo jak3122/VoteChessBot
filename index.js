@@ -62,16 +62,10 @@ function onEvent(data) {
     votes = {};
     const gameId = data.game.id;
     // console.log("new game", gameId);
-    api.sendChat(
-      gameId,
-      "spectator",
+    chatSpectator(
       "Use /<move> to vote for a move, e.g. /e4 or /O-O, or /resign to vote for resignation."
     );
-    api.sendChat(
-      gameId,
-      "player",
-      "You're playing against the crowd - good luck!"
-    );
+    chatPlayer("You're playing against the crowd - good luck!");
     watchGame(gameId);
   }
 }
@@ -113,11 +107,7 @@ function onGameEvent(data) {
       game.move(move, { sloppy: true });
     }
     if (isOurMove()) {
-      api.sendChat(
-        currentGameFull.id,
-        "spectator",
-        `Voting ends in ${VOTE_SECONDS} seconds.`
-      );
+      chatSpectator(`Voting ends in ${VOTE_SECONDS} seconds.`);
       setVoteTimer();
     } else {
       setAbortTimer();
@@ -142,11 +132,7 @@ function onGameEvent(data) {
     if (game.game_over()) {
       return;
     }
-    api.sendChat(
-      currentGameFull.id,
-      "spectator",
-      `Voting ends in ${VOTE_SECONDS} seconds.`
-    );
+    chatSpectator(`Voting ends in ${VOTE_SECONDS} seconds.`);
     setVoteTimer();
   } else if (data.type == "chatLine" && data.room === "spectator") {
     if (usernameIsBanned(data.username)) {
@@ -167,7 +153,7 @@ function onGameEvent(data) {
 
 function onGameEnd() {
   playing = false;
-  api.sendChat(currentGameFull.id, "player", "Good game!");
+  chatPlayer("Good game!");
   console.log("game ended");
   clearVoteTimer();
   clearAbortTimer();
@@ -198,11 +184,7 @@ function setVoteTimer() {
     if (moves.length === 0) {
       console.log("No votes received");
       if (!waitingForVotes) {
-        api.sendChat(
-          currentGameFull.id,
-          "spectator",
-          `No votes received, waiting for votes.`
-        );
+        chatSpectator(`No votes received, waiting for votes.`);
       }
       waitingForVotes = true;
       votes = {};
@@ -246,11 +228,7 @@ function setVoteTimer() {
     if (sortedVotes.length === 0) {
       console.log("sortedVotes empty");
       if (!waitingForVotes) {
-        api.sendChat(
-          currentGameFull.id,
-          "spectator",
-          `No votes received, waiting for votes.`
-        );
+        chatSpectator("spectator", `No votes received, waiting for votes.`);
       }
       waitingForVotes = true;
       votes = {};
@@ -264,11 +242,7 @@ function setVoteTimer() {
     console.log("winners:", winners.map(w => (w.san ? w.san : w)));
     if (winners.length === 0) {
       if (!waitingForVotes) {
-        api.sendChat(
-          currentGameFull.id,
-          "spectator",
-          `No votes received, waiting for votes.`
-        );
+        chatSpectator(`No votes received, waiting for votes.`);
         waitingForVotes = true;
       }
       console.log("no legal votes");
@@ -279,11 +253,7 @@ function setVoteTimer() {
     if (winners.length === 1) {
       const winnerObj = winners[0];
       if (winnerObj === "resign") {
-        api.sendChat(
-          currentGameFull.id,
-          "spectator",
-          `Resignation won with ${winnerVotes} votes.`
-        );
+        chatSpectator(`Resignation won with ${winnerVotes} votes.`);
         api.resignGame(currentGameFull.id);
         votes = {};
         return;
@@ -295,29 +265,19 @@ function setVoteTimer() {
         winnerUci = winnerObj.from + winnerObj.to;
       }
       if (winnerObj.promotion) winnerUci += winnerObj.promotion;
-      api.sendChat(
-        currentGameFull.id,
-        "spectator",
-        `${winnerObj.san} won with ${winnerVotes} votes.`
-      );
+      chatSpectator(`${winnerObj.san} won with ${winnerVotes} votes.`);
       console.log("game.move result:", game.move(winnerObj.san));
       api.makeMove(currentGameFull.id, winnerUci);
     } else {
       // don't allow resigning in a tie
       winners = winners.filter(m => m !== "resign");
       const winnerObj = winners[Math.floor(Math.random() * winners.length)];
-      api.sendChat(
-        currentGameFull.id,
-        "spectator",
+      chatSpectator(
         `The following moves tied with ${winnerVotes} votes: ${winners
           .map(m => m.san)
           .join(", ")}`
       );
-      api.sendChat(
-        currentGameFull.id,
-        "spectator",
-        `Randomly chosen winner: ${winnerObj.san}`
-      );
+      chatSpectator(`Randomly chosen winner: ${winnerObj.san}`);
       let winnerUci;
       if (winnerObj.from === "@") {
         winnerUci = winnerObj.piece.toUpperCase() + "@" + winnerObj.to;
@@ -411,12 +371,20 @@ async function nextQueueChallenge() {
   }
 }
 
+function chatPlayer(text) {
+  api.sendChat(currentGameFull.id, "player", text);
+}
+
+function chatSpectator(text) {
+  api.sendChat(currentGameFull.id, "spectator", text);
+}
+
 function banUsername(username) {
   fs.appendFile(BANNED_FILENAME, username.toLowerCase() + "\n", err => {
     if (err) throw err;
     console.log("wrote username to banned.txt:", username);
     bannedUsernames.push(username.toLowerCase());
-    api.sendChat(currentGameFull.id, "spectator", `Banned ${username}.`);
+    chatSpectator(`Banned ${username}.`);
   });
 }
 
@@ -427,7 +395,7 @@ function unbanUsername(username) {
   fs.writeFile(BANNED_FILENAME, bannedUsernames.join("\n") + "\n", err => {
     if (err) throw err;
     console.log("unbanned:", username);
-    api.sendChat(currentGameFull.id, "spectator", `Unbanned ${username}.`);
+    chatSpectator(`Unbanned ${username}.`);
   });
 }
 
@@ -436,11 +404,7 @@ function makeMod(username) {
     if (err) throw err;
     console.log("made mod:", username);
     modUsernames.push(username.toLowerCase());
-    api.sendChat(
-      currentGameFull.id,
-      "spectator",
-      `Promoted ${username} to mod.`
-    );
+    chatSpectator(`Promoted ${username} to mod.`);
   });
 }
 
