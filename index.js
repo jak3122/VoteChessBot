@@ -305,7 +305,7 @@ function setVoteTimer() {
     } else {
       // don't allow resigning in a tie
       winners = winners.filter(m => m !== "resign");
-      const randWinner = winners[Math.floor(Math.random() * winners.length)];
+      const winnerObj = winners[Math.floor(Math.random() * winners.length)];
       api.sendChat(
         currentGameFull.id,
         "spectator",
@@ -316,7 +316,7 @@ function setVoteTimer() {
       api.sendChat(
         currentGameFull.id,
         "spectator",
-        `Randomly chosen winner: ${randWinner.san}`
+        `Randomly chosen winner: ${winnerObj.san}`
       );
       let winnerUci;
       if (winnerObj.from === "@") {
@@ -324,8 +324,8 @@ function setVoteTimer() {
       } else {
         winnerUci = winnerObj.from + winnerObj.to;
       }
-      if (randWinner.promotion) winnerUci += randWinner.promotion;
-      console.log("game.move result:", game.move(randWinner.san));
+      if (winnerObj.promotion) winnerUci += winnerObj.promotion;
+      console.log("game.move result:", game.move(winnerObj.san));
       api.makeMove(currentGameFull.id, winnerUci);
     }
     votes = {};
