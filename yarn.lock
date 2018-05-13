@@ -5,3 +5,7 @@
 chess.js@^0.10.2:
   version "0.10.2"
   resolved "https://registry.yarnpkg.com/chess.js/-/chess.js-0.10.2.tgz#eacefa2067155f87f046e80cc12d2019eef1b81a"
+
+crazyhouse.js@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/crazyhouse.js/-/crazyhouse.js-0.0.8.tgz#7847b44880809d5d942de42e7fc62a77dac5b51a"

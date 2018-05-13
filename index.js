@@ -1,13 +1,22 @@
 const fs = require("fs");
 const path = require("path");
 const Chess = require("chess.js").Chess;
+const Crazyhouse = require("crazyhouse.js").Crazyhouse;
 const api = require("./api");
 
 const VOTE_SECONDS = process.env.VOTE_SECONDS || 15;
 
+const SUPPORTED_VARIANTS = ["standard", "crazyhouse"];
+
 const BANNED_FILENAME = path.join(__dirname, "banned.txt");
 
 const MODS_FILENAME = path.join(__dirname, "mods.txt");
+
+const mapVariantToGameObj = variant =>
+  ({
+    standard: new Chess(),
+    crazyhouse: new Crazyhouse()
+  }[variant]);
 
 let modUsernames = [];
 
@@ -74,7 +83,7 @@ function onEventStreamEnd() {
 function isGoodChallenge(data) {
   return (
     data.challenge.rated === false &&
-    data.challenge.variant.key === "standard" &&
+    SUPPORTED_VARIANTS.includes(data.challenge.variant.key) &&
     data.challenge.timeControl.type === "clock" &&
     data.challenge.speed === "rapid" &&
     data.challenge.timeControl.increment >= 15 &&
@@ -83,13 +92,17 @@ function isGoodChallenge(data) {
 }
 
 function watchGame(gameId) {
-  game = new Chess();
   api.listenGame(gameId, onGameEvent, onGameEnd);
+}
+
+function createNewGameObject() {
+  game = mapVariantToGameObj(currentGameFull.variant.key);
 }
 
 function onGameEvent(data) {
   if (data.type === "gameFull") {
     currentGameFull = data;
+    createNewGameObject();
     clearVoteTimer();
     // console.log("new game:", data);
     // if we restarted the bot and connected to a game in progress,

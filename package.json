@@ -5,6 +5,7 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "chess.js": "^0.10.2"
+    "chess.js": "^0.10.2",
+    "crazyhouse.js": "^0.0.8"
   }
 }
