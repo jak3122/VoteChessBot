@@ -1,26 +1,24 @@
-const fs = require("fs");
 const path = require("path");
 const Chess = require("chess.js").Chess;
 const Crazyhouse = require("crazyhouse.js").Crazyhouse;
 const api = require("./api");
+const {
+  banUsername,
+  unbanUsername,
+  makeMod,
+  usernameIsBanned,
+  usernameIsMod
+} = require("./bans");
 
 const VOTE_SECONDS = process.env.VOTE_SECONDS || 15;
 
 const SUPPORTED_VARIANTS = ["standard", "crazyhouse"];
-
-const BANNED_FILENAME = path.join(__dirname, "banned.txt");
-
-const MODS_FILENAME = path.join(__dirname, "mods.txt");
 
 const mapVariantToGameObj = variant =>
   ({
     standard: new Chess(),
     crazyhouse: new Crazyhouse()
   }[variant]);
-
-let modUsernames = [];
-
-let bannedUsernames = [];
 
 let playing = false;
 
@@ -66,7 +64,7 @@ function onEvent(data) {
       "Use /<move> to vote for a move, e.g. /e4 or /O-O, or /resign to vote for resignation."
     );
     chatPlayer("You're playing against the crowd - good luck!");
-    watchGame(gameId);
+    api.listenGame(gameId, onGameEvent, onGameEnd);
   }
 }
 
@@ -83,10 +81,6 @@ function isGoodChallenge(data) {
     data.challenge.timeControl.increment >= 15 &&
     data.challenge.timeControl.limit >= 30
   );
-}
-
-function watchGame(gameId) {
-  api.listenGame(gameId, onGameEvent, onGameEnd);
 }
 
 function createNewGameObject() {
@@ -378,70 +372,3 @@ function chatPlayer(text) {
 function chatSpectator(text) {
   api.sendChat(currentGameFull.id, "spectator", text);
 }
-
-function banUsername(username) {
-  fs.appendFile(BANNED_FILENAME, username.toLowerCase() + "\n", err => {
-    if (err) throw err;
-    console.log("wrote username to banned.txt:", username);
-    bannedUsernames.push(username.toLowerCase());
-    chatSpectator(`Banned ${username}.`);
-  });
-}
-
-function unbanUsername(username) {
-  bannedUsernames = bannedUsernames.filter(
-    name => name !== username.toLowerCase()
-  );
-  fs.writeFile(BANNED_FILENAME, bannedUsernames.join("\n") + "\n", err => {
-    if (err) throw err;
-    console.log("unbanned:", username);
-    chatSpectator(`Unbanned ${username}.`);
-  });
-}
-
-function makeMod(username) {
-  fs.appendFile(MODS_FILENAME, username.toLowerCase() + "\n", err => {
-    if (err) throw err;
-    console.log("made mod:", username);
-    modUsernames.push(username.toLowerCase());
-    chatSpectator(`Promoted ${username} to mod.`);
-  });
-}
-
-function usernameIsBanned(username) {
-  return bannedUsernames.includes(username.toLowerCase());
-}
-
-function usernameIsMod(username) {
-  return modUsernames.includes(username.toLowerCase());
-}
-
-function cacheModUsernames() {
-  fs.readFile(MODS_FILENAME, (err, data) => {
-    if (err) throw err;
-    modUsernames = data
-      .toString()
-      .split("\n")
-      .filter(line => !!line.trim());
-    console.log("cached mods.txt:", modUsernames);
-  });
-}
-
-function cacheBannedUsernames() {
-  fs.readFile(BANNED_FILENAME, (err, data) => {
-    if (err) throw err;
-    bannedUsernames = data
-      .toString()
-      .split("\n")
-      .filter(line => !!line.trim());
-    console.log("cached banned.txt:", bannedUsernames);
-  });
-}
-
-cacheModUsernames();
-cacheBannedUsernames();
-
-setInterval(() => {
-  cacheModUsernames();
-  cacheBannedUsernames();
-}, 60000);
