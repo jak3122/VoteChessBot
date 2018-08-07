@@ -61,9 +61,10 @@ function onEvent(data) {
     votes = {};
     const gameId = data.game.id;
     chatSpectator(
-      "Use /<move> to vote for a move, e.g. /e4 or /O-O, or /resign to vote for resignation."
+      "Use /<move> to vote for a move, e.g. /e4 or /O-O, or /resign to vote for resignation.",
+      gameId
     );
-    chatPlayer("You're playing against the crowd - good luck!");
+    chatPlayer("You're playing against the crowd - good luck!", gameId);
     api.listenGame(gameId, onGameEvent, onGameEnd);
   }
 }
@@ -77,9 +78,8 @@ function isGoodChallenge(data) {
     data.challenge.rated === false &&
     SUPPORTED_VARIANTS.includes(data.challenge.variant.key) &&
     data.challenge.timeControl.type === "clock" &&
-    data.challenge.speed === "rapid" &&
-    data.challenge.timeControl.increment >= 15 &&
-    data.challenge.timeControl.limit >= 30
+    data.challenge.timeControl.increment >= VOTE_SECONDS &&
+    data.challenge.timeControl.limit >= 60
   );
 }
 
@@ -329,10 +329,12 @@ async function nextQueueChallenge() {
   }
 }
 
-function chatPlayer(text) {
-  api.sendChat(currentGameFull.id, "player", text);
+function chatPlayer(text, id) {
+  const gameId = id === undefined ? currentGameFull.id : id;
+  api.sendChat(gameId, "player", text);
 }
 
-function chatSpectator(text) {
-  api.sendChat(currentGameFull.id, "spectator", text);
+function chatSpectator(text, id) {
+  const gameId = id === undefined ? currentGameFull.id : id;
+  api.sendChat(gameId, "spectator", text);
 }
