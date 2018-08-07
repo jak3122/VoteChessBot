@@ -88,6 +88,7 @@ function createNewGameObject() {
 }
 
 function onGameEvent(data) {
+  console.log(data.type);
   if (data.type === "gameFull") {
     currentGameFull = data;
     createNewGameObject();
@@ -147,6 +148,7 @@ function onGameEnd() {
 }
 
 function isOurMove(moves) {
+  if (!currentGameFull) return false;
   if (moves) {
     return (
       (currentGameFull.white.id === "votechess" && moves.length % 2 === 0) ||
