@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "private": false,
   "dependencies": {
-    "chess.js": "^0.10.2",
-    "crazyhouse.js": "^0.0.8"
+    "chess.js": "^0.10.3",
+    "crazyhouse.js": "^0.0.8",
+    "ws": "^7.2.3"
   },
   "devDependencies": {
-    "eslint": "^4.19.1"
+    "eslint": "^6.8.0"
   }
 }
