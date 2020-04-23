@@ -65,7 +65,7 @@ class Controller {
   }
 
   handleGameStartEvent(data) {
-    this.gameState = new GameState(data);
+    this.gameState.init(data);
     this.chatSpectator("Install the Firefox or Chrome extension to play - links in profile");
     this.chatPlayer("You're playing against the crowd - good luck!");
     api.listenGame(this.gameState.gameId, this.onGameEvent, this.onGameEnd);

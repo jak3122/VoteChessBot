@@ -15,3 +15,5 @@ class Challenges {
     }
   }
 }
+
+module.exports = Challenges;

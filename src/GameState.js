@@ -1,8 +1,8 @@
 
 class GameState {
-  constructor(apiGame) {
-    this.gameId = apiGame.game.id;
-    this.apiGame = apiGame;
+  constructor() {
+    this.gameId = null;
+    this.apiGame = null;
     this.abortTimer = null;
     this.playing = false;
   }

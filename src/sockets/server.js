@@ -1,6 +1,7 @@
 const WebSocket = require('ws');
 const ctrl = require('../Controller');
 
+const port = 6379;
 const wss = new WebSocket.Server({ port });
 
 wss.broadcast = (data, condition) => {
