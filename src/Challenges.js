@@ -7,7 +7,7 @@ class Challenges {
     this.queue.push(challenge);
   }
 
-  nextQueueChallenge() {
+  async nextQueueChallenge() {
     while (this.queue.length > 0) {
       const challenge = this.queue.shift();
       const accepted = await api.acceptChallenge(challenge.challenge.id);
