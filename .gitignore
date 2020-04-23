@@ -1,4 +1,6 @@
 node_modules/
 .vscode/
-banned.txt
-mods.txt
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
