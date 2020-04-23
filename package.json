@@ -6,6 +6,7 @@
   "dependencies": {
     "chess.js": "^0.10.3",
     "crazyhouse.js": "^0.0.8",
+    "dotenv": "^8.2.0",
     "ws": "^7.2.3"
   },
   "devDependencies": {

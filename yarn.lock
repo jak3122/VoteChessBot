@@ -286,6 +286,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^8.2.0":
+  version: 8.2.0
+  resolution: "dotenv@npm:8.2.0"
+  checksum: 2/16cb89cbd7b98b053899b8aba8c5044c8fb61a2db8a81fe70360b75035fce5fed53bd7a34d772be717d0880c0321122a4c09423f518025e1b52d96791521b1a7
+  languageName: node
+  linkType: hard
+
 "emoji-regex@npm:^7.0.1":
   version: 7.0.3
   resolution: "emoji-regex@npm:7.0.3"
@@ -1158,6 +1165,7 @@ __metadata:
   dependencies:
     chess.js: ^0.10.3
     crazyhouse.js: ^0.0.8
+    dotenv: ^8.2.0
     eslint: ^6.8.0
     ws: ^7.2.3
   languageName: unknown

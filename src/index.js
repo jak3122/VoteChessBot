@@ -1,3 +1,4 @@
+require('dotenv').config();
 const api = require("./api");
 const ctrl = require('./Controller');
 require('./sockets/server');
