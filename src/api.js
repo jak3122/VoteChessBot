@@ -69,8 +69,8 @@ exports.sendChat = (gameId, room, text) => {
   });
   req.write(
     querystring.stringify({
-      room: room,
-      text: text
+      room,
+      text,
     })
   );
   req.end();
