@@ -133,7 +133,6 @@ class Controller {
   }
 
   chat(text, room) {
-    const gameId = id === undefined ? currentGameFull.id : id;
     const gameId = this.gameState.gameId;
     api.sendChat(gameId, room, text);
   }
