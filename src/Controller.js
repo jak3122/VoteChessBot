@@ -120,8 +120,12 @@ class Controller {
     }
   }
 
-  recordVote() {
-
+  recordVote(data) {
+    const moveInfo = this.gameState.getMoveInfo(data.move);
+    this.voteState.recordVote({
+      vote: moveInfo,
+      username: data.username,
+    });
   }
 
   getVoteResults() {

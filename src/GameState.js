@@ -60,8 +60,15 @@ class GameState {
 
   getMoveInfo(move) {
     const m = this.game.move(move);
-    if (m) this.game.undo();
-    return m;
+    if (!m) return null;
+
+    const moveInfo = {
+      ...m,
+      uci: m.from + m.to,
+    };
+    this.game.undo();
+
+    return moveInfo;
   }
 
   clearAbortTimer() {
