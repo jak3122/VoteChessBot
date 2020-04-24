@@ -1,13 +1,5 @@
 require('dotenv').config();
-const api = require("./api");
-const ctrl = require('./Controller');
 require('./sockets/server');
 
-function connect() {
-  api.connect(
-    ctrl.onStreamEvent,
-    connect,
-  );
-}
-
-connect();
+const ctrl = require('./Controller');
+ctrl.connect();

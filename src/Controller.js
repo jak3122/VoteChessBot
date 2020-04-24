@@ -11,6 +11,13 @@ class Controller {
     this.voteState = new VoteState();
   }
 
+  connect() {
+    api.connect(
+      this.onStreamEvent.bind(this),
+      this.connect.bind(this),
+    );
+  }
+
   onStreamEvent(data) {
     switch (data.type) {
       case "challenge":
@@ -151,4 +158,5 @@ class Controller {
   }
 }
 
-module.exports = new Controller();
+const ctrl = new Controller();
+module.exports = ctrl;
