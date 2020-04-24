@@ -21,7 +21,7 @@ class VoteState {
   }
 
   clearVoteTimer() {
-    if (this.voteTimer) clearTimeout(voteTimer);
+    if (this.voteTimer) clearTimeout(this.voteTimer);
     this.voteTimer = null;
   }
 
