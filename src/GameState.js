@@ -1,3 +1,4 @@
+const Chess = require('chess.js').Chess;
 
 class GameState {
   constructor() {
