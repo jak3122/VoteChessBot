@@ -10,7 +10,7 @@ class GameState {
 
   init(apiGame) {
     this.apiGame = apiGame;
-    this.gameId = apiGame.game.id;
+    this.gameId = apiGame.id;
     this.game = new Chess();
     this.playing = true;
     this.loadGameMoves()

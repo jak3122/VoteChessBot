@@ -74,7 +74,7 @@ class Controller {
 
   handleGameStartEvent(data) {
     this.gameState.setId(data.game.id);
-    this.chatSpectator("Install the Firefox or Chrome extension to play - links in profile");
+    // this.chatSpectator("Install the Firefox or Chrome extension to play - links in profile");
     this.chatPlayer("You're playing against the crowd - good luck!");
     api.listenGame(
       this.gameState.gameId,

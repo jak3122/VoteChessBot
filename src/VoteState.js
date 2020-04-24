@@ -1,3 +1,4 @@
+const { VOTE_SECONDS } = require('./utils/constants');
 
 class VoteState {
   constructor() {
