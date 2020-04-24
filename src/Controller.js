@@ -1,4 +1,5 @@
 const api = require('./api');
+const { wss } = require('./sockets/server');
 const Challenges = require('./Challenges');
 const GameState = require('./GameState');
 const VoteState = require('./VoteState');
@@ -111,10 +112,18 @@ class Controller {
     }
 
     this.setVoteTimer();
+    this.broadcastVoteClock();
   }
 
   setVoteTimer() {
     this.voteState.setVoteTimer().then(winningMove => this.handleVoteWinner(winningMove));
+  }
+
+  broadcastVoteClock() {
+    wss.broadcast({
+      type: 'vote-timer',
+      data: this.voteState.getVoteTimeLeft(),
+    });
   }
 
   setAbortTimer() {
@@ -147,10 +156,6 @@ class Controller {
     });
   }
 
-  getVoteResults() {
-    return this.voteState.voteResults();
-  }
-
   chat(text, room) {
     const gameId = this.gameState.gameId;
     api.sendChat(gameId, room, text);
@@ -162,6 +167,15 @@ class Controller {
 
   chatSpectator(text) {
     this.chat(text, "spectator");
+  }
+
+  getVoteResults() {
+    const msg = {
+      type: 'vote-results',
+      data: this.voteState.voteResults(),
+    };
+
+    return msg;
   }
 }
 

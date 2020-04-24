@@ -4,6 +4,7 @@ class VoteState {
   constructor() {
     this.votes = {};
     this.voteTimer = null;
+    this.voteStartedAt = null;
   }
 
   recordVote({ vote, username }) {
@@ -12,17 +13,24 @@ class VoteState {
 
   setVoteTimer() {
     this.clearVoteTimer();
+    this.voteStartedAt = Date.now();
+
     return new Promise(resolve => {
       this.voteTimer = setTimeout(
         () => this.onVotingEnded().then(winner => resolve(winner)),
         VOTE_SECONDS * 1000
       );
-    })
+    });
   }
 
   clearVoteTimer() {
     if (this.voteTimer) clearTimeout(this.voteTimer);
     this.voteTimer = null;
+    this.voteStartedAt = null;
+  }
+
+  getVoteTimeLeft() {
+    return (VOTE_SECONDS * 1000) - Date.now() - this.voteStartedAt;
   }
 
   onVotingEnded() {

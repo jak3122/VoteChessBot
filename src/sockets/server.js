@@ -46,3 +46,5 @@ wss.on('connection', (ws, req) => {
 wss.on('error', err => {
   console.log('websocket error:', err);
 });
+
+exports.wss = wss;
