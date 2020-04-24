@@ -1,5 +1,5 @@
 const api = require('./api');
-const { wss } = require('./sockets/server');
+const { createServer } = require('./sockets/server');
 const Challenges = require('./Challenges');
 const GameState = require('./GameState');
 const VoteState = require('./VoteState');
@@ -10,6 +10,7 @@ class Controller {
     this.challenges = new Challenges();
     this.gameState = new GameState();
     this.voteState = new VoteState();
+    this.wss = createServer(this);
   }
 
   connect() {
@@ -120,7 +121,7 @@ class Controller {
   }
 
   broadcastVoteClock() {
-    wss.broadcast({
+    this.wss.broadcast({
       type: 'vote-timer',
       data: this.voteState.getVoteTimeLeft(),
     });
