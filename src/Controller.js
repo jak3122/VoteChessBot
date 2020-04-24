@@ -87,7 +87,7 @@ class Controller {
     this.gameState.init(data);
     this.voteState.clearVoteTimer();
     if (this.gameState.isOurMove()) {
-      chatSpectator(`Voting ends in ${this.voteState.voteTime()} seconds.`);
+      // this.chatSpectator(`Voting ends in ${this.voteState.voteTime()} seconds.`);
       this.setVoteTimer();
     } else {
       this.setAbortTimer();
