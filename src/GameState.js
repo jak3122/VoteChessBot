@@ -18,6 +18,8 @@ class GameState {
   loadGameMoves() {
     // if we restarted the bot and connected to a game in progress,
     // we need to reload the game moves
+    if (!this.apiGame.state) return;
+
     const playedMoves = this.apiGame.state.moves.split(" ");
     for (let move of playedMoves) {
       this.game.move(move, { sloppy: true });
