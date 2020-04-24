@@ -1,1 +1,2 @@
+const MIN_INCREMENT_SECONDS = 20;
 const VOTE_SECONDS = process.env.VOTE_SECONDS || 30;

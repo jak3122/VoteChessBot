@@ -2,6 +2,7 @@ const api = require('./api');
 const Challenges = require('./Challenges');
 const GameState = require('./GameState');
 const VoteState = require('./VoteState');
+const { isGoodChallenge } = require('./utils/helpers');
 
 class Controller {
   constructor() {
@@ -118,6 +119,10 @@ class Controller {
       this.gameState.game.move(winningMove.san);
       api.makeMove(this.gameState.gameId, winningMove.uci);
     }
+  }
+
+  isVotingOpen() {
+    return this.gameState.playing;
   }
 
   recordVote(data) {
