@@ -122,7 +122,10 @@ class Controller {
   }
 
   handleVoteWinner(winningMove) {
-    if (!winningMove) this.setVoteTimer();
+    if (!winningMove) {
+      this.setVoteTimer();
+      return;
+    }
 
     if (winningMove === 'resign') {
       api.resignGame(this.gameState.gameId);
