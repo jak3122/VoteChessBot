@@ -48,14 +48,16 @@ class VoteState {
 
     // tally the votes
     const counts = {};
+    const moveObjs = {};
     moves.forEach(move => {
-      counts[move] = counts[move] ? counts[move] + 1 : 1;
+      counts[move.san] = counts[move.san] ? counts[move.san] + 1 : 1;
+      moveObjs[move.san] = move;
     });
 
     // sort with highest votes first into [ { move, numVotes }, ... ] format
     const sortedResults = [];
-    for (let move in counts) {
-      sortedResults.push({ move, numVotes: counts[move] });
+    for (let san in counts) {
+      sortedResults.push({ move: moveObjs[san], numVotes: counts[san] });
     }
     sortedResults.sort((a, b) => b.numVotes - a.numVotes);
 
