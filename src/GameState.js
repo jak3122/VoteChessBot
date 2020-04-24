@@ -48,6 +48,10 @@ class GameState {
     }
   }
 
+  isGameOver() {
+    return this.game.game_over();
+  }
+
   handleNewMove(moves) {
     const newMove = moves[moves.length - 1];
     this.game.move(newMove, { sloppy: true });
