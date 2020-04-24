@@ -30,7 +30,7 @@ class VoteState {
   }
 
   getVoteTimeLeft() {
-    return (VOTE_SECONDS * 1000) - Date.now() - this.voteStartedAt;
+    return Math.abs(Date.now() - this.voteStartedAt - (VOTE_SECONDS * 1000));
   }
 
   onVotingEnded() {
