@@ -113,11 +113,11 @@ class Controller {
     }
 
     this.setVoteTimer();
-    this.broadcastVoteClock();
   }
 
   setVoteTimer() {
     this.voteState.setVoteTimer().then(winningMove => this.handleVoteWinner(winningMove));
+    this.broadcastVoteClock();
   }
 
   broadcastVoteClock() {
