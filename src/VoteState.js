@@ -30,7 +30,6 @@ class VoteState {
       const results = this.voteResults();
 
       if (results.length === 0) {
-        this.setVoteTimer();
         return resolve(null);
       }
 
