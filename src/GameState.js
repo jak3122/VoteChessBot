@@ -1,4 +1,5 @@
 const Chess = require('chess.js').Chess;
+const { BOT_USERNAME } = require('./utils/constants');
 
 class GameState {
   constructor() {
@@ -33,15 +34,16 @@ class GameState {
 
   isOurMove(moves) {
     if (!this.apiGame) return false;
+    const botId = BOT_USERNAME.toLowerCase();
     if (moves) {
       return (
-        (this.apiGame.white.id === "votechess" && moves.length % 2 === 0) ||
-        (this.apiGame.black.id === "votechess" && moves.length % 2 !== 0)
+        (this.apiGame.white.id === botId && moves.length % 2 === 0) ||
+        (this.apiGame.black.id === botId && moves.length % 2 !== 0)
       );
     } else {
       return (
-        (this.apiGame.white.id === "votechess" && this.game.turn() === "w") ||
-        (this.apiGame.black.id === "votechess" && this.game.turn() === "b")
+        (this.apiGame.white.id === botId && this.game.turn() === "w") ||
+        (this.apiGame.black.id === botId && this.game.turn() === "b")
       );
     }
   }
