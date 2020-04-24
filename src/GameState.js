@@ -16,6 +16,10 @@ class GameState {
     this.loadGameMoves()
   }
 
+  setId(gameId) {
+    this.gameId = gameId;
+  }
+
   loadGameMoves() {
     // if we restarted the bot and connected to a game in progress,
     // we need to reload the game moves
