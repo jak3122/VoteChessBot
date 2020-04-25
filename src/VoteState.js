@@ -1,10 +1,15 @@
-const { VOTE_SECONDS } = require('./utils/constants');
-
 class VoteState {
   constructor() {
     this.votes = {};
     this.voteTimer = null;
     this.voteStartedAt = null;
+    this.voteInterval = null;
+  }
+
+  init(data) {
+    this.votes = {};
+    this.voteInterval = data.clock.increment - 10000;
+    this.clearVoteTimer();
   }
 
   recordVote({ vote, username }) {
@@ -18,7 +23,7 @@ class VoteState {
     return new Promise(resolve => {
       this.voteTimer = setTimeout(
         () => this.onVotingEnded().then(winner => resolve(winner)),
-        VOTE_SECONDS * 1000
+        this.voteInterval
       );
     });
   }
@@ -30,7 +35,7 @@ class VoteState {
   }
 
   getVoteTimeLeft() {
-    return Math.abs(Date.now() - this.voteStartedAt - (VOTE_SECONDS * 1000));
+    return Math.abs(Date.now() - this.voteStartedAt - this.voteInterval);
   }
 
   onVotingEnded() {

@@ -87,7 +87,7 @@ class Controller {
 
   handleGameFullEvent(data) {
     this.gameState.init(data);
-    this.voteState.clearVoteTimer();
+    this.voteState.init(data);
     if (this.gameState.isOurMove()) {
       // this.chatSpectator(`Voting ends in ${this.voteState.voteTime()} seconds.`);
       this.setVoteTimer();
