@@ -127,7 +127,7 @@ class Controller {
       const legalMoves = this.gameState.game.moves({ verbose: true });
       const move = legalMoves[Math.floor(Math.random() * legalMoves.length)];
       this.recordVote({
-        vote: move,
+        move,
         username: `user_${Math.floor(Math.random() * 10000)}`,
       });
       this.wss.broadcast(this.getVoteResults());
@@ -160,7 +160,7 @@ class Controller {
   }
 
   isVotingOpen() {
-    return this.gameState.playing;
+    return this.gameState.playing && this.gameState.isOurMove();
   }
 
   recordVote(data) {
