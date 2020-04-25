@@ -118,6 +118,20 @@ class Controller {
   setVoteTimer() {
     this.voteState.setVoteTimer().then(winningMove => this.handleVoteWinner(winningMove));
     this.broadcastVoteClock();
+    const interval = setInterval(() => {
+      if (!this.isVotingOpen()) {
+        clearInterval(interval);
+        return;
+      }
+
+      const legalMoves = this.gameState.game.moves({ verbose: true });
+      const move = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+      this.recordVote({
+        vote: move,
+        username: `user_${Math.floor(Math.random() * 10000)}`,
+      });
+      this.wss.broadcast(this.getVoteResults());
+    }, 1000);
   }
 
   broadcastVoteClock() {
