@@ -29,13 +29,17 @@ module.exports.createServer = ctrl => {
 
       console.log(data);
 
-      if (data.type === 'vote-cast') {
-        if (!ctrl.isVotingOpen()) return;
-        ctrl.recordVote(data);
-        // broadcast vote table to everyone who has already voted
-        wss.broadcast(ctrl.getVoteResults(), (client, voteTable) => {
-          return true;
-        });
+      switch (data.type) {
+        case 'vote-cast':
+          if (!ctrl.isVotingOpen()) return;
+          ctrl.recordVote(data);
+          // broadcast vote table to everyone who has already voted
+          wss.broadcast(ctrl.getVoteResults(), (client, voteTable) => {
+            return true;
+          });
+          break;
+        default:
+          break;
       }
     });
 
