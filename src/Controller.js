@@ -1,9 +1,9 @@
 const api = require('./api');
 const { createServer } = require('./sockets/server');
+const { isGoodChallenge } = require('./utils/helpers');
 const Challenges = require('./Challenges');
 const GameState = require('./GameState');
 const VoteState = require('./VoteState');
-const { isGoodChallenge } = require('./utils/helpers');
 
 class Controller {
   constructor() {

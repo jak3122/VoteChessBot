@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 
-const port = 6379;
+const port = 8181;
 
 module.exports.createServer = ctrl => {
   const wss = new WebSocket.Server({ port });
