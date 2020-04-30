@@ -186,7 +186,7 @@ class Controller {
       voteResults = this.voteState.voteResults(ip);
     }
     let state = isVoting ? states.VOTING : states.WAITING;
-    if (vote)
+    if (vote && isVoting)
       state = states.VOTE_SUBMITTED;
 
     return {

@@ -81,7 +81,6 @@ class VoteState {
     sortedResults = sortedResults.map(vote => ({
       ...vote,
       percent: vote.numVotes / highestCount,
-      isUserVote: ip && vote.san === this.votes[ip].san,
     }));
 
     return sortedResults;
