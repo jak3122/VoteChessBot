@@ -24,6 +24,7 @@ module.exports.createServer = ctrl => {
   wss.on('connection', (ws, req) => {
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     console.log('client connected:', ip);
+    ws.ip = ip;
 
     ws.send(JSON.stringify(ctrl.onConnect(ip)));
 
@@ -37,8 +38,8 @@ module.exports.createServer = ctrl => {
           if (!ctrl.isVotingOpen()) return;
           ctrl.recordVote(data, ip);
           // broadcast vote table to everyone who has already voted
-          wss.broadcast(ctrl.getVoteResults(), (client, voteTable) => {
-            return true;
+          wss.broadcast(ctrl.getVoteResults(), client => {
+            return Boolean(ctrl.voteState.votes[client.ip]);
           });
           break;
         default:
