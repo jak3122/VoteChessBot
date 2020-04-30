@@ -130,7 +130,7 @@ class Controller {
       this.recordVote({
         move,
       }, id);
-      this.wss.broadcast(this.getVoteResults());
+      this.wss.broadcast(this.getVoteResults(), client => !!this.voteState.votes[client.ip]);
     }, 1000);
   }
 
