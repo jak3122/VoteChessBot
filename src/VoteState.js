@@ -12,8 +12,8 @@ class VoteState {
     this.clearVoteTimer();
   }
 
-  recordVote({ vote, username }) {
-    this.votes[username] = vote;
+  recordVote({ vote, ip }) {
+    this.votes[ip] = vote;
   }
 
   setVoteTimer() {
@@ -55,7 +55,7 @@ class VoteState {
     });
   }
 
-  voteResults() {
+  voteResults(ip) {
     const moves = Object.values(this.votes);
 
     // tally the votes
@@ -80,6 +80,7 @@ class VoteState {
     sortedResults = sortedResults.map(vote => ({
       ...vote,
       percent: vote.numVotes / highestCount,
+      isUserVote: ip && vote.san === this.votes[ip].san,
     }));
 
     return sortedResults;

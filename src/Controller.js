@@ -126,10 +126,10 @@ class Controller {
 
       const legalMoves = this.gameState.game.moves({ verbose: true });
       const move = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+      const id = `user_${Math.floor(Math.random() * 10000)}`;
       this.recordVote({
         move,
-        username: `user_${Math.floor(Math.random() * 10000)}`,
-      });
+      }, id);
       this.wss.broadcast(this.getVoteResults());
     }, 1000);
   }
@@ -163,12 +163,37 @@ class Controller {
     return this.gameState.playing && this.gameState.isOurMove();
   }
 
-  recordVote(data) {
+  recordVote(data, ip) {
     const moveInfo = this.gameState.getMoveInfo(data.move);
     this.voteState.recordVote({
       vote: moveInfo,
-      username: data.username,
+      ip,
     });
+  }
+
+  onConnect(ip) {
+    const states = {
+      WAITING: 0,
+      VOTING: 0.01,
+      VOTE_ENTERED: 0.02,
+      VOTE_SUBMITTED: 0.03,
+    };
+    const vote = this.voteState.votes[ip];
+    const isVoting = this.isVotingOpen();
+    const clock = isVoting && this.voteState.getVoteTimeLeft();
+    const voteResults = isVoting && vote && this.voteState.voteResults(ip);
+    let state = isVoting ? states.VOTING : states.WAITING;
+    if (vote)
+      state = states.VOTE_SUBMITTED;
+
+    return {
+      type: 'on-connect',
+      data: {
+        clock,
+        state,
+        voteResults,
+      },
+    };
   }
 
   chat(text, room) {
