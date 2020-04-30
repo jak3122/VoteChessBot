@@ -181,7 +181,10 @@ class Controller {
     const vote = this.voteState.votes[ip];
     const isVoting = this.isVotingOpen();
     const clock = (isVoting && this.voteState.getVoteTimeLeft()) || undefined;
-    const voteResults = (vote && this.voteState.voteResults(ip)) || undefined;
+    let voteResults;
+    if ((isVoting && vote) || !isVoting) {
+      voteResults = this.voteState.voteResults(ip);
+    }
     let state = isVoting ? states.VOTING : states.WAITING;
     if (vote)
       state = states.VOTE_SUBMITTED;
