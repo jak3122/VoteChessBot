@@ -19,6 +19,7 @@ class VoteState {
   setVoteTimer() {
     this.clearVoteTimer();
     this.voteStartedAt = Date.now();
+    this.votes = {};
 
     return new Promise(resolve => {
       this.voteTimer = setTimeout(
@@ -48,8 +49,6 @@ class VoteState {
 
       const { winners, winnerVotes } = this.findAllWinners(results);
       const finalWinner = this.findFinalWinner(winners);
-
-      this.votes = {};
 
       resolve(finalWinner);
     });
