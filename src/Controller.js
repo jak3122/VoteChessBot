@@ -194,6 +194,7 @@ class Controller {
       data: {
         clock,
         state,
+        vote,
         voteResults,
       },
     };
