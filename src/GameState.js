@@ -78,7 +78,7 @@ class GameState {
 
     const moveInfo = {
       ...m,
-      uci: m.from + m.to,
+      uci: m.from + m.to + (m.promotion || ''),
     };
     this.game.undo();
 
