@@ -1,6 +1,6 @@
 const { MIN_LIMIT_SECONDS, MIN_INCREMENT_SECONDS } = require('./constants');
 
-module.exports = validateChallenge = challenge => {
+module.exports.validateChallenge = challenge => {
   if (challenge.rated === true) {
     return {
       valid: false,
