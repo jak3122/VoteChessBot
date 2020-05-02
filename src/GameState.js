@@ -63,15 +63,6 @@ class GameState {
     this.clearAbortTimer();
   }
 
-  setAbortTimer() {
-    this.clearAbortTimer();
-    return new Promise(resolve => {
-      this.abortTimer = setTimeout(() => {
-        resolve();
-      }, 60000);
-    });
-  }
-
   getMoveInfo(move) {
     const m = this.game.move(move);
     if (!m) return null;
@@ -83,6 +74,15 @@ class GameState {
     this.game.undo();
 
     return moveInfo;
+  }
+
+  setAbortTimer() {
+    this.clearAbortTimer();
+    return new Promise(resolve => {
+      this.abortTimer = setTimeout(() => {
+        resolve();
+      }, 60000);
+    });
   }
 
   clearAbortTimer() {

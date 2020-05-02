@@ -1,13 +1,12 @@
 const api = require('./api');
 const { createServer } = require('./sockets/server');
-const { isGoodChallenge } = require('./utils/helpers');
 const Challenges = require('./Challenges');
 const GameState = require('./GameState');
 const VoteState = require('./VoteState');
 
 class Controller {
   constructor() {
-    this.challenges = new Challenges();
+    this.challenges = new Challenges({ isPlaying: this.isPlaying });
     this.gameState = new GameState();
     this.voteState = new VoteState();
     this.wss = createServer(this);
@@ -57,21 +56,11 @@ class Controller {
     this.chatPlayer('Good game!');
     this.gameState.gameOver();
     this.voteState.gameOver();
-    setTimeout(() => this.challenges.nextQueueChallenge(), 1000);
+    this.challenges.nextQueueChallenge();
   }
 
   handleChallengeEvent(data) {
-    const challengeId = data.challenge.id;
-    if (!isGoodChallenge(data)) {
-      api.declineChallenge(challengeId);
-      return;
-    }
-
-    if (this.gameState.playing) {
-      this.challenges.addChallenge(data.challenge);
-    } else {
-      api.acceptChallenge(challengeId);
-    }
+    this.challenges.addChallenge(data.challenge);
   }
 
   handleGameStartEvent(data) {
@@ -89,9 +78,11 @@ class Controller {
     this.gameState.init(data);
     this.voteState.init(data);
     if (this.gameState.isOurMove()) {
-      // this.chatSpectator(`Voting ends in ${this.voteState.voteTime()} seconds.`);
       this.setVoteTimer();
-    } else {
+    }
+
+    const moves = data.state.moves.split(" ");
+    if (moves.length < 2) {
       this.setAbortTimer();
     }
   }
@@ -159,16 +150,24 @@ class Controller {
     }
   }
 
+  isPlaying() {
+    return this.gameState.playing;
+  }
+
   isVotingOpen() {
     return this.gameState.playing && this.gameState.isOurMove();
   }
 
   recordVote(data, ip) {
     const moveInfo = this.gameState.getMoveInfo(data.move);
+    if (!moveInfo) return;
+
     this.voteState.recordVote({
       vote: moveInfo,
       ip,
     });
+
+    this.gameState.clearAbortTimer();
   }
 
   onConnect(ip) {
