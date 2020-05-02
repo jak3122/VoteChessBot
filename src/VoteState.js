@@ -43,16 +43,22 @@ class VoteState {
     return new Promise(resolve => {
       const results = this.voteResults();
 
-      if (results.length === 0) {
+      if (results.votes.length === 0) {
         return resolve(null);
       }
 
       const numDrawVotes = this.numDrawVotes();
+      const numVotes = this.numVotes();
+      const drawPercent = numDrawVotes / numVotes;
+      const draw = drawPercent >= 0.5;
 
       const { winners, winnerVotes } = this.findAllWinners(results);
       const finalWinner = this.findFinalWinner(winners);
 
-      resolve({ winner: finalWinner, draw });
+      resolve({
+        winner: finalWinner,
+        draw,
+      });
     });
   }
 
@@ -85,7 +91,17 @@ class VoteState {
       percent: vote.numVotes / highestCount,
     }));
 
-    return sortedResults;
+    const numDrawVotes = this.numDrawVotes();
+    const numVotes = this.numVotes();
+    const drawPercent = numDrawVotes / numVotes;
+
+    return {
+      votes: sortedResults,
+      drawResults: {
+        number: numDrawVotes,
+        percent: drawPercent,
+      },
+    };
   }
 
   findFinalWinner(winners) {
@@ -98,10 +114,10 @@ class VoteState {
     return finalWinners[0];
   }
 
-  findAllWinners(sortedVotes) {
-    if (sortedVotes.length === 0) return [];
-    const maxVotes = sortedVotes[0].numVotes;
-    const winners = sortedVotes.filter(vote => vote.numVotes === maxVotes).map(vote => vote.move);
+  findAllWinners({ votes }) {
+    if (votes.length === 0) return [];
+    const maxVotes = votes[0].numVotes;
+    const winners = votes.filter(vote => vote.numVotes === maxVotes).map(vote => vote.move);
     return { winners, winnerVotes: maxVotes };
   }
 
