@@ -36,6 +36,8 @@ class VoteState {
   }
 
   getVoteTimeLeft() {
+    if (!this.voteStartedAt) return 0;
+
     return Math.abs(Date.now() - this.voteStartedAt - this.voteInterval);
   }
 
@@ -131,6 +133,7 @@ class VoteState {
 
   gameOver() {
     this.clearVoteTimer();
+    this.voteStartedAt = null;
   }
 
 }
