@@ -23,7 +23,7 @@ class VoteState {
 
     return new Promise(resolve => {
       this.voteTimer = setTimeout(
-        () => this.onVotingEnded().then(winner => resolve(winner)),
+        () => this.onVotingEnded().then((winnerData) => resolve(winnerData)),
         this.voteInterval
       );
     });
@@ -47,14 +47,16 @@ class VoteState {
         return resolve(null);
       }
 
+      const numDrawVotes = this.numDrawVotes();
+
       const { winners, winnerVotes } = this.findAllWinners(results);
       const finalWinner = this.findFinalWinner(winners);
 
-      resolve(finalWinner);
+      resolve({ winner: finalWinner, draw });
     });
   }
 
-  voteResults(ip) {
+  voteResults() {
     const moves = Object.values(this.votes);
 
     if (!moves.length) return [];
@@ -92,7 +94,7 @@ class VoteState {
     }
 
     // don't allow resigning in a tie
-    const finalWinners = winners.filter(move => move !== 'resign');
+    const finalWinners = winners.filter(move => move.san !== 'resign');
     return finalWinners[0];
   }
 
@@ -101,6 +103,14 @@ class VoteState {
     const maxVotes = sortedVotes[0].numVotes;
     const winners = sortedVotes.filter(vote => vote.numVotes === maxVotes).map(vote => vote.move);
     return { winners, winnerVotes: maxVotes };
+  }
+
+  numDrawVotes() {
+    return Object.values(this.votes).filter(vote => vote.draw).length;
+  }
+
+  numVotes() {
+    return Object.values(this.votes).length;
   }
 
   gameOver() {

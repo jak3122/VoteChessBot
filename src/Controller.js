@@ -6,7 +6,7 @@ const VoteState = require('./VoteState');
 
 class Controller {
   constructor() {
-    this.challenges = new Challenges({ isPlaying: this.isPlaying });
+    this.challenges = new Challenges({ isPlaying: this.isPlaying.bind(this) });
     this.gameState = new GameState();
     this.voteState = new VoteState();
     this.wss = createServer(this);
@@ -108,7 +108,7 @@ class Controller {
   }
 
   setVoteTimer() {
-    this.voteState.setVoteTimer().then(winningMove => this.handleVoteWinner(winningMove));
+    this.voteState.setVoteTimer().then(winnerData => this.handleVoteWinner(winnerData));
     this.broadcastVoteClock();
     const interval = setInterval(() => {
       if (!this.isVotingOpen()) {
@@ -116,8 +116,10 @@ class Controller {
         return;
       }
 
-      const legalMoves = this.gameState.game.moves({ verbose: true });
-      const move = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+      const legalMoves = [...this.gameState.game.moves({ verbose: true }), { san: 'resign '}];
+      let move = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+      const draw = Math.random() > 0.7;
+      move = { ...move, draw };
       const id = `user_${Math.floor(Math.random() * 10000)}`;
       this.recordVote({
         move,
@@ -137,17 +139,17 @@ class Controller {
     this.gameState.setAbortTimer().then(() => api.abortGame(this.gameState.gameId));
   }
 
-  handleVoteWinner(winningMove) {
-    if (!winningMove) {
+  handleVoteWinner({ winner, draw }) {
+    if (!winner) {
       this.setVoteTimer();
       return;
     }
 
-    if (winningMove === 'resign') {
+    if (winner.san === 'resign') {
       api.resignGame(this.gameState.gameId);
     } else {
-      this.gameState.game.move(winningMove.san);
-      api.makeMove(this.gameState.gameId, winningMove.uci);
+      this.gameState.game.move(winner.san);
+      api.makeMove(this.gameState.gameId, winner.uci, draw);
     }
   }
 
@@ -160,12 +162,19 @@ class Controller {
   }
 
   recordVote(data, ip) {
-    const moveInfo = this.gameState.getMoveInfo(data.move);
+    let moveInfo;
+    if (data.resign) {
+      moveInfo = { san: 'resign' };
+    } else {
+      moveInfo = this.gameState.getMoveInfo(data.move);
+    }
     if (!moveInfo) return;
 
+    if (data.draw && !data.resign) moveInfo.draw = true;
+
     this.voteState.recordVote({
-      vote: moveInfo,
       ip,
+      vote: moveInfo,
     });
 
     this.gameState.clearAbortTimer();
@@ -183,7 +192,7 @@ class Controller {
     const clock = (isVoting && this.voteState.getVoteTimeLeft()) || undefined;
     let voteResults;
     if ((isVoting && vote) || !isVoting) {
-      voteResults = this.voteState.voteResults(ip);
+      voteResults = this.voteState.voteResults();
     }
     let state = isVoting ? states.VOTING : states.WAITING;
     if (vote && isVoting)

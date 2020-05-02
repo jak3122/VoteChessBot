@@ -104,10 +104,11 @@ exports.declineChallenge = challengeId => {
   req.end();
 };
 
-exports.makeMove = (gameId, move) => {
+exports.makeMove = (gameId, move, offeringDraw) => {
+  const draw = offeringDraw ? '?offeringDraw=true' : '';
   const options = {
     ...optionsPost,
-    path: `/api/bot/game/${gameId}/move/${move}`
+    path: `/api/bot/game/${gameId}/move/${move}${draw}`
   };
   const req = https.request(options, res => {});
   req.end();
