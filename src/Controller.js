@@ -10,6 +10,7 @@ class Controller {
     this.gameState = new GameState();
     this.voteState = new VoteState();
     this.wss = createServer(this);
+    setTimeout(() => this.challenges.nextQueueChallenge(), 5000);
   }
 
   connect() {
@@ -151,11 +152,11 @@ class Controller {
   }
 
   isPlaying() {
-    return this.gameState.playing;
+    return Boolean(this.gameState && this.gameState.playing);
   }
 
   isVotingOpen() {
-    return this.gameState.playing && this.gameState.isOurMove();
+    return this.isPlaying() && this.gameState.isOurMove();
   }
 
   recordVote(data, ip) {
