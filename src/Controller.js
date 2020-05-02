@@ -119,12 +119,11 @@ class Controller {
       }
 
       const legalMoves = this.gameState.game.moves({ verbose: true });
-      let move = legalMoves[Math.floor(Math.random() * legalMoves.length)];
-      const draw = Math.random() > 0.7;
-      move = { ...move, draw };
+      const move = legalMoves[Math.floor(Math.random() * legalMoves.length)];
       const id = `user_${Math.floor(Math.random() * 10000)}`;
       this.recordVote({
         move,
+        draw: Math.random() > 0.2,
         resign: Math.random() < 0.1,
       }, id);
       this.wss.broadcast(this.getVoteResults(), client => !!this.voteState.votes[client.ip]);
