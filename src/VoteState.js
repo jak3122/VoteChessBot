@@ -60,7 +60,7 @@ class VoteState {
       const { winners, winnerVotes } = this.findAllWinners(this.results);
       const finalWinner = this.findFinalWinner(winners);
 
-      this.results.votes.find(vote => vote.san === finalWinner.san).winner = true;
+      this.results.votes.find(vote => vote.move.san === finalWinner.san).winner = true;
 
       resolve({
         winner: finalWinner,
