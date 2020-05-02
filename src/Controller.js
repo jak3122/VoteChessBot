@@ -108,7 +108,9 @@ class Controller {
   }
 
   setVoteTimer() {
-    this.voteState.setVoteTimer().then(winnerData => this.handleVoteWinner(winnerData));
+    this.voteState.setVoteTimer()
+      .then(winnerData => this.handleVoteWinner(winnerData))
+      .then(() => this.broadcastVoteResults());
     this.broadcastVoteClock();
     const interval = setInterval(() => {
       if (!this.isVotingOpen()) {
@@ -133,6 +135,10 @@ class Controller {
       type: 'vote-timer',
       data: this.voteState.getVoteTimeLeft(),
     });
+  }
+
+  broadcastVoteResults() {
+    this.wss.broadcast(this.getVoteResults());
   }
 
   setAbortTimer() {
