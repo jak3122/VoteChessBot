@@ -170,14 +170,14 @@ class Controller {
 
   recordVote(data, ip) {
     let moveInfo;
-    if (data.resign) {
+    if (data.resign || data.move.san === 'resign') {
       moveInfo = { san: 'resign' };
     } else {
       moveInfo = this.gameState.getMoveInfo(data.move);
     }
     if (!moveInfo) return;
 
-    if (data.draw && !data.resign) moveInfo.draw = true;
+    if (data.draw && !moveInfo.san === 'resign') moveInfo.draw = true;
 
     this.voteState.recordVote({
       ip,
