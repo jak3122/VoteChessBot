@@ -139,7 +139,11 @@ class Controller {
   }
 
   broadcastVoteResults() {
-    this.wss.broadcast(this.getVoteResults());
+    const results = this.getVoteResults();
+    if (results.data.votes && results.data.votes[0]) {
+      results.data.votes[0].winner = true;
+    }
+    this.wss.broadcast(results);
   }
 
   setAbortTimer() {
