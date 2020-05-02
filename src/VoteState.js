@@ -4,6 +4,7 @@ class VoteState {
     this.voteTimer = null;
     this.voteStartedAt = null;
     this.voteInterval = null;
+    this.results = null;
   }
 
   init(data) {
@@ -14,12 +15,14 @@ class VoteState {
 
   recordVote({ vote, ip }) {
     this.votes[ip] = vote;
+    this.results = this.calculateVoteResults();
   }
 
   setVoteTimer() {
     this.clearVoteTimer();
     this.voteStartedAt = Date.now();
     this.votes = {};
+    this.results = null;
 
     return new Promise(resolve => {
       this.voteTimer = setTimeout(
@@ -43,19 +46,21 @@ class VoteState {
 
   onVotingEnded() {
     return new Promise(resolve => {
-      const results = this.voteResults();
+      this.results = this.calculateVoteResults();
 
-      if (results.votes.length === 0) {
+      if (this.results.votes.length === 0) {
         return resolve(null);
       }
 
       const numDrawVotes = this.numDrawVotes();
       const numVotes = this.numVotes();
       const drawPercent = numDrawVotes / numVotes;
-      const draw = drawPercent >= 0.5;
+      const draw = drawPercent > 0.5;
 
-      const { winners, winnerVotes } = this.findAllWinners(results);
+      const { winners, winnerVotes } = this.findAllWinners(this.results);
       const finalWinner = this.findFinalWinner(winners);
+
+      this.results.votes.find(vote => vote.san === finalWinner.san).winner = true;
 
       resolve({
         winner: finalWinner,
@@ -64,7 +69,7 @@ class VoteState {
     });
   }
 
-  voteResults() {
+  calculateVoteResults() {
     const moves = Object.values(this.votes);
 
     if (!moves.length) return { votes: [] };
@@ -104,6 +109,10 @@ class VoteState {
         percent: drawPercent,
       },
     };
+  }
+
+  voteResults() {
+    return this.results;
   }
 
   findFinalWinner(winners) {
