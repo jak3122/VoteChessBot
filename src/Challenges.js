@@ -39,7 +39,7 @@ class Challenges {
 
       while (this.queue.length > 0) {
         const challenge = this.queue.shift();
-        const accepted = await api.acceptChallenge(challenge.challenge.id);
+        const accepted = await api.acceptChallenge(challenge.id);
         if (accepted) break;
       }
     }, 1000);
