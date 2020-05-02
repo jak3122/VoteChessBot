@@ -65,7 +65,7 @@ class VoteState {
   voteResults() {
     const moves = Object.values(this.votes);
 
-    if (!moves.length) return [];
+    if (!moves.length) return { votes: [] };
 
     // tally the votes
     const counts = {};
