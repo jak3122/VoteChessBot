@@ -23,6 +23,7 @@ class Challenges {
     }
 
     this.queue.push(challenge);
+    console.log(this.queueStr());
     this.nextQueueChallenge();
   }
 
@@ -40,9 +41,18 @@ class Challenges {
       while (this.queue.length > 0) {
         const challenge = this.queue.shift();
         const accepted = await api.acceptChallenge(challenge.id);
+        console.log(this.queueStr());
         if (accepted) break;
       }
     }, 1000);
+  }
+
+  queueStr() {
+    const q = this.queue
+      .map((challenge, i) => `\n  ${i}) ${challenge.challenger.name} ${challenge.timeControl.show}`)
+      .join(',');
+
+    return `Queue: ${q}`;
   }
 }
 
