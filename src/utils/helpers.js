@@ -8,6 +8,13 @@ module.exports.validateChallenge = challenge => {
     };
   }
 
+  if (challenge.variant.key !== 'standard') {
+    return {
+      valid: false,
+      reason: 'Challenge must be standard chess.',
+    };
+  }
+
   if (challenge.timeControl.type !== 'clock') {
     return {
       valid: false,
