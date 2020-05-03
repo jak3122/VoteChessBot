@@ -49,7 +49,7 @@ class Challenges {
 
   queueStr() {
     const q = this.queue
-      .map((challenge, i) => `\n  ${i}) ${challenge.challenger.name} ${challenge.timeControl.show}`)
+      .map((challenge, i) => `\n  ${i + 1}) <${challenge.id}>${challenge.challenger.name} ${challenge.timeControl.show}`)
       .join(',');
 
     return `Queue: ${q}`;

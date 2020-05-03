@@ -23,15 +23,12 @@ module.exports.createServer = ctrl => {
 
   wss.on('connection', (ws, req) => {
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log('client connected:', ip);
     ws.ip = ip;
 
     ws.send(JSON.stringify(ctrl.onConnect(ip)));
 
     ws.on('message', message => {
       const data = JSON.parse(message);
-
-      console.log(data);
 
       switch (data.type) {
         case 'vote-cast':
@@ -48,7 +45,6 @@ module.exports.createServer = ctrl => {
     });
 
     ws.on('close', () => {
-      console.log('client disconnected');
     });
   });
 

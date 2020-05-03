@@ -38,7 +38,6 @@ class Controller {
   }
 
   onGameEvent(data) {
-    console.log(data.type);
     switch (data.type) {
       case "gameFull":
         this.handleGameFullEvent(data);
