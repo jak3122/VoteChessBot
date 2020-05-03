@@ -177,7 +177,7 @@ class Controller {
     }
     if (!moveInfo) return;
 
-    if (data.draw && !moveInfo.san === 'resign') moveInfo.draw = true;
+    if (data.draw && moveInfo.san !== 'resign') moveInfo.draw = true;
 
     this.voteState.recordVote({
       ip,
