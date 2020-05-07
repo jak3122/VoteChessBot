@@ -6,4 +6,5 @@ app.get('/', (req, res) => {
   res.send('VoteChess homepage.');
 });
 
-app.listen(8181, () => console.log('Web server started on port 8181'));
+const port = 8000;
+app.listen(port, () => console.log(`Web server started on port ${port}`));
