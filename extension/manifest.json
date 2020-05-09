@@ -20,8 +20,12 @@
       "css": ["votechess.css"]
     }
   ],
-
   "permissions": [
     "storage"
-  ]
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "update_url": "https://votechess.link/updates.json"
+    }
+  }
 }
