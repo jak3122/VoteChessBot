@@ -7,3 +7,6 @@ if (REQUIRE_LOGIN) {
 
 const ctrl = require('./Controller');
 ctrl.connect();
+
+process.on('unhandledRejection', r => console.log(r));
+process.on('uncaughtException', e => console.log('uncaught exception:', e));

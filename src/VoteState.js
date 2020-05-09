@@ -26,7 +26,7 @@ class VoteState {
 
     return new Promise(resolve => {
       this.voteTimer = setTimeout(
-        () => this.onVotingEnded().then((winnerData) => resolve(winnerData)),
+        () => this.onVotingEnded().then(winnerData => resolve(winnerData)),
         this.voteInterval
       );
     });

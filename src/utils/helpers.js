@@ -29,7 +29,7 @@ module.exports.validateChallenge = challenge => {
     };
   }
 
-  if (challenge.timeControl.limit < 60) {
+  if (challenge.timeControl.limit < MIN_LIMIT_SECONDS) {
     return {
       valid: false,
       reason: `Challenge time limit must be at least ${MIN_LIMIT_SECONDS} seconds.`,

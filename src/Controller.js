@@ -54,9 +54,9 @@ class Controller {
 
   onGameEnd() {
     this.chatPlayer('Good game!');
+    this.wss.broadcast({ type: 'game-ended' });
     this.gameState.gameOver();
     this.voteState.gameOver();
-    this.broadcastVoteClock();
     this.challenges.nextQueueChallenge();
   }
 
@@ -189,10 +189,11 @@ class Controller {
 
   onConnect(ip) {
     const states = {
-      WAITING: 0,
-      VOTING: 0.01,
-      VOTE_ENTERED: 0.02,
-      VOTE_SUBMITTED: 0.03,
+      NOT_PLAYING: 0,
+      WAITING: 0.1,
+      VOTING: 0.2,
+      VOTE_ENTERED: 0.3,
+      VOTE_SUBMITTED: 0.4,
     };
     const vote = this.voteState.votes[ip];
     const isVoting = this.isVotingOpen();
@@ -205,11 +206,14 @@ class Controller {
     if (vote && isVoting)
       state = states.VOTE_SUBMITTED;
 
+    if (!this.gameState.playing) state = states.NOT_PLAYING;
+
     return {
       type: 'on-connect',
       data: {
         clock,
         state,
+        playing,
         vote,
         voteResults,
       },
