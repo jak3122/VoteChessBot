@@ -3,7 +3,24 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.send('VoteChess homepage.');
+  res.send(`
+    <html>
+      <head>
+        <title>VoteChess</title>
+        <style>
+          body {
+            align-items: center;
+            display: flex;
+            justify-content: center;
+          }
+        </style>
+       </head>
+      <body>
+        <a href="/firefox/votechess.xpi">VoteChess Firefox extension</a>
+        <a href="/chrome/votechess.xpi">VoteChess Chrome extension</a>
+      </body>
+    </html>
+  `);
 });
 
 const port = 8000;
