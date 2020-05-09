@@ -17,7 +17,8 @@ class VoteChess {
 
     this.createVue();
 
-    browser.storage.local.get('showApp').then(({ showApp }) => { this.vue.showApp = showApp; });
+    browser.storage.local.get('showApp')
+      .then(({ showApp }) => { this.vue.showApp = (showApp === false ? false : true); });
 
     this.watchArrows();
 
