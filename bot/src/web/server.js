@@ -11,7 +11,12 @@ app.get('/', (req, res) => {
           body {
             align-items: center;
             display: flex;
+            height: 90vh;
+            flex-direction: column;
             justify-content: center;
+          }
+          body a {
+            margin: 10px;
           }
         </style>
        </head>
