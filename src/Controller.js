@@ -96,7 +96,7 @@ class Controller {
       return;
     }
 
-    if (this.gameState.isGameOver()) {
+    if (this.gameState.isGameOver() || data.status !== 'started') {
       return;
     }
 
