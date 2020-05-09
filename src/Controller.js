@@ -66,8 +66,6 @@ class Controller {
 
   handleGameStartEvent(data) {
     this.gameState.setId(data.game.id);
-    // this.chatSpectator("Install the Firefox or Chrome extension to play - links in profile");
-    this.chatPlayer("You're playing against the crowd - good luck!");
     api.listenGame(
       this.gameState.gameId,
       this.onGameEvent.bind(this),
@@ -85,6 +83,11 @@ class Controller {
     const moves = data.state.moves.split(" ");
     if (moves.length < 2) {
       this.setAbortTimer();
+    }
+
+    if (moves.length === 0) {
+      // this.chatSpectator("Install the Firefox or Chrome extension to play - links in profile");
+      this.chatPlayer("You're playing against the crowd - good luck!");
     }
   }
 
