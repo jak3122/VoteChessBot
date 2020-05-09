@@ -213,7 +213,6 @@ class Controller {
       data: {
         clock,
         state,
-        playing,
         vote,
         voteResults,
       },
