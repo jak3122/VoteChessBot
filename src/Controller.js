@@ -199,7 +199,7 @@ class Controller {
     const isVoting = this.isVotingOpen();
     const clock = (isVoting && this.voteState.getVoteTimeLeft()) || undefined;
     let voteResults;
-    if ((isVoting && vote) || !isVoting) {
+    if ((isVoting && vote) || !isVoting || !this.gameState.playing) {
       voteResults = this.voteState.voteResults();
     }
     let state = isVoting ? states.VOTING : states.WAITING;
