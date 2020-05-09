@@ -1,0 +1,137 @@
+#votechess {
+  border-radius: 3px;
+  bottom: 0;
+  position: fixed;
+  right: 200px;
+  width: 260px;
+  z-index: 119;
+}
+
+#votechess .app-wrapper {
+  align-items: center;
+  background-color: #262421;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),0 3px 1px -2px rgba(0,0,0,0.2),0 1px 5px 0 rgba(0,0,0,0.12);
+  color: #bababa;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  height: 180px;
+  min-height: 100px;
+  padding: 1.4vmin 2vmin;
+  position: relative;
+}
+
+#votechess .title-bar {
+  background: linear-gradient(to bottom, #3c3934, #33312e 100%);
+  border-bottom: 1px solid #404040;
+  cursor: pointer;
+  padding: 3px 5px;
+}
+
+#votechess .title-bar:hover {
+  background: linear-gradient(to bottom, #44413b, #3b3935 100%);
+  color: #ccc;
+}
+
+#votechess .menu {
+  background-color: #262421;
+  border: 1px solid #5d5b5b;
+  border-radius: 3px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),0 3px 1px -2px rgba(0,0,0,0.2),0 1px 5px 0 rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  position: absolute;
+  right: 0;
+  top: 20px;
+}
+
+#votechess .menu .draw {
+  position: relative;
+}
+
+#votechess .menu .draw .hand-wrapper {
+  transform: translateY(-1px) rotate(-90deg);
+}
+
+#votechess .menu .draw .check-icon {
+  bottom: 0;
+  color: #629924;
+  right: 0;
+  position: absolute;
+}
+
+#votechess .menu-button {
+  cursor: pointer;
+  height: 10px;
+  position: absolute;
+  right: 15px;
+  top: 5px;
+  width: 10px;
+}
+
+#votechess .top {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 70px;
+}
+
+#votechess .buttons {
+  display: flex;
+  flex-direction: row;
+  padding: 5px;
+}
+
+#votechess .submit {
+  cursor: pointer;
+  padding: 5px;
+  text-transform: none;
+}
+
+#votechess .clock {
+  font-family: Roboto;
+  font-size: 1.5em;
+  letter-spacing: .05em;
+  opacity: 100%;
+}
+
+#votechess .clock.faded {
+  opacity: 50%;
+}
+
+#votechess .vote-results-container {
+  margin-top: 5px;
+  overflow-y: scroll;
+  width: 100%;
+}
+
+#votechess .vote-results-container .vote-result {
+  height: 20px;
+  margin-bottom: 2px;
+  position: relative;
+  width: 100%;
+}
+
+#votechess .vote-results-container .vote-result.winner {
+  font-weight: bold;
+}
+
+#votechess .vote-results-container .vote-result .bg {
+  background-color: #3e5322;
+  height: 100%;
+  position: absolute;
+  transition-duration: .5s;
+  transition-property: width;
+  width: 100%;
+}
+
+#votechess .vote-results-container .vote-result .san {
+  left: 10px;
+  position: absolute;
+}
+
+#votechess .vote-results-container .vote-result .count {
+  position: absolute;
+  right: 20px;
+}

@@ -1,0 +1,12 @@
+{
+  "name": "votechess",
+  "version": "0.0.1",
+  "description": "Browser extension for playing VoteChess on lichess.org",
+  "main": "VoteChess.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

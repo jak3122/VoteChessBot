@@ -1,0 +1,27 @@
+{
+  "manifest_version": 2,
+  "name": "VoteChess",
+  "version": "0.0.1",
+  "description": "VoteChess - adds an interface for voting on moves for the VoteChess account on lichess.org.",
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.lichess.org/*"],
+      "js": [
+        "lib/chess.js/chess.js",
+        "lib/vue/vue.min.js",
+        "ArrowWatcher.js",
+        "Clock.js",
+        "GameState.js",
+        "VoteChess.js"
+      ],
+      "css": ["votechess.css"]
+    }
+  ],
+
+  "permissions": [
+    "storage"
+  ]
+}
